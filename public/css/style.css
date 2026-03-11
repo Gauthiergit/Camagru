@@ -1,0 +1,70 @@
+/* Reset de base */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #fafafa;
+}
+
+header {
+    background: white;
+    border-bottom: 1px solid #dbdbdb;
+    padding: 15px 10%;
+    position: sticky;
+    top: 0;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo { font-weight: bold; font-size: 1.5rem; text-decoration: none; color: #262626; }
+.menu a { text-decoration: none; color: #262626; margin-left: 20px; }
+.btn-login { background: #0095f6; color: white !important; padding: 5px 15px; border-radius: 4px; }
+
+main {
+    flex: 1; /* Le contenu prend toute la place entre le header et le footer */
+    padding: 40px 10%;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #8e8e8e;
+    font-size: 0.8rem;
+}
+
+.welcome-box { text-align: center; margin-bottom: 50px; }
+.cta { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #0095f6; color: white; text-decoration: none; border-radius: 5px; }
+
+.flash-container {
+    width: 80%;
+    margin: 20px auto;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Rouge pour les erreurs */
+.alert-danger {
+    background-color: #9c333c;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Vert pour les succès */
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}

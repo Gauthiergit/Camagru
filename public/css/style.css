@@ -24,8 +24,14 @@ nav {
 }
 
 .logo { font-weight: bold; font-size: 1.5rem; text-decoration: none; color: #262626; }
-.menu a { text-decoration: none; color: #262626; margin-left: 20px; }
+.menu { display: flex; gap: 30px; }
+.menu a {
+	display: flex;
+    text-decoration: none;
+    color: #262626;
+}
 .btn-login { background: #0095f6; color: white !important; padding: 5px 15px; border-radius: 4px; }
+.btn-logout-link { background: none; border: none; color: #ff4757; cursor: pointer; font: inherit; text-decoration: underline; padding: 0; }
 
 main {
     flex: 1; /* Le contenu prend toute la place entre le header et le footer */

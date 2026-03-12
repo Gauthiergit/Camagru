@@ -1,17 +1,14 @@
 <?php
-require_once ROOT . "/config/database.php";
+
 require_once ROOT . "/app/models/user/userModel.php";
+require_once ROOT . '/app/core/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
-    // On crée la connexion PDO
-    $pdo = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = Database::getPDO();
 
-    // On instancie notre "Model"
     $userModel = new UserModel($pdo);
 
-    // On appelle la méthode magique
     $result = $userModel->register(
         $_POST['username'],
         $_POST['email'],
@@ -20,13 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 
     if ($result === true) {
-        // Succès : Redirection vers le login
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Compte créé !'];
-        redirect("home");
+        redirect("login-form");
     } else {
-        // Échec : On récupère le message d'erreur renvoyé par le Model
         $_SESSION['flash'] = ['type' => 'danger', 'message' => $result];
         redirect("register-form");
     }
-    exit();
 }

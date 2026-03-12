@@ -8,13 +8,15 @@ $action = $_GET['action'] ?? 'home';
 
 $logicRoutes = [
     'register' => '/app/controllers/auth/registerController.php',
+	'login' => '/app/controllers/auth/loginController.php',
+	'logout' => '/app/controllers/auth/logoutController.php',
     'setup'    => '/config/setup.php',
-    'logout'   => '/app/controllers/auth/logoutController.php'
 ];
 
 $viewRoutes = [
     'home'          => '/app/views/homeView.php',
     'register-form' => '/app/views/auth/registerView.php',
+	'login-form' => '/app/views/auth/loginView.php'
 ];
 
 // ------Logic------

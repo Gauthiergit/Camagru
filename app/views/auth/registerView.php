@@ -24,5 +24,5 @@
         <button type="submit" class="btn-primary">S'inscrire</button>
     </form>
     
-    <p>Déjà un compte ? <a href="login.php">Connectez-vous</a></p>
+    <p>Déjà un compte ? <a href="/index.php?action=login-form">Connectez-vous</a></p>
 </div>

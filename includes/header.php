@@ -13,10 +13,17 @@
             <div class="menu">
                 <a href="index.php">Accueil</a>
                 <a href="gallery.php">Galerie</a>
-                <a href="/index.php?page=register">S'inscrire</a>
+                <a href="/index.php?action=register-form">S'inscrire</a>
                 <a href="login.php" class="btn-login">Connexion</a>
             </div>
         </nav>
     </header>
 
     <main>
+
+	<?php if (isset($_SESSION['flash'])): ?>
+	    <div class="alert alert-<?php echo $_SESSION['flash']['type'];?>">
+	        <?php echo htmlspecialchars($_SESSION['flash']['message']);?>
+	    </div>
+	    <?php unset($_SESSION['flash']); ?>
+	<?php endif; ?>

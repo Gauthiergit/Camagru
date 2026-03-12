@@ -2,23 +2,35 @@
 define('ROOT', dirname(__DIR__));
 session_start();
 
-$page = $_GET['page'] ?? 'home';
-
 require_once ROOT . "/app/utils/functions.php";
 
-require_once ROOT . '/includes/header.php';
+$action = $_GET['action'] ?? 'home';
 
-switch ($page) {
-    case 'home':
-        require_once ROOT . '/app/views/homeView.php';
-        break;
-    case 'register':
-        require_once ROOT . '/app/views/auth/registerView.php';
-        break;
-    default:
-        http_response_code(404);
-        echo "<h1>404 - Page non trouvée</h1>";
-        break;
+$logicRoutes = [
+    'register' => '/app/controllers/auth/registerController.php',
+    'setup'    => '/config/setup.php',
+    'logout'   => '/app/controllers/auth/logoutController.php'
+];
+
+$viewRoutes = [
+    'home'          => '/app/views/homeView.php',
+    'register-form' => '/app/views/auth/registerView.php',
+];
+
+// ------Logic------
+if (array_key_exists($action, $logicRoutes)) {
+    require_once ROOT . $logicRoutes[$action];
+    exit();
 }
 
-require_once ROOT . '/includes/footer.php';
+// ------Views------
+if (array_key_exists($action, $viewRoutes)) {
+    require_once ROOT . '/includes/header.php';
+    require_once ROOT . $viewRoutes[$action];
+    require_once ROOT . '/includes/footer.php';
+} else {
+    http_response_code(404);
+    require_once ROOT . '/includes/header.php';
+    echo "<h1>404 - Page non trouvée</h1>";
+    require_once ROOT . '/includes/footer.php';
+}

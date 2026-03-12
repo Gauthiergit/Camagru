@@ -3,7 +3,7 @@
     <p>Le premier réseau social de montage photo de 42.</p>
     
     <div class="actions">
-        <a href="/index.php?page=register" class="cta">Commencer l'aventure</a>
+        <a href="/index.php?action=register-form" class="cta">Commencer l'aventure</a>
     </div>
 </section>
 

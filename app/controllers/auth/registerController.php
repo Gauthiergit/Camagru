@@ -1,7 +1,6 @@
 <?php
-session_start();
-require_once "config/database.php";
-require_once "app/models/user/userModel.php";
+require_once ROOT . "/config/database.php";
+require_once ROOT . "/app/models/user/userModel.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
@@ -23,11 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result === true) {
         // Succès : Redirection vers le login
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Compte créé !'];
-        redirect("login");
+        redirect("home");
     } else {
         // Échec : On récupère le message d'erreur renvoyé par le Model
         $_SESSION['flash'] = ['type' => 'danger', 'message' => $result];
-        redirect("register");
+        redirect("register-form");
     }
     exit();
 }

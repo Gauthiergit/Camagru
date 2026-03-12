@@ -6,17 +6,35 @@ require_once ROOT . "/app/utils/functions.php";
 
 $action = $_GET['action'] ?? 'home';
 
+$guestOnly = ['login-form', 'register-form', 'login', 'register'];
+
+$authOnly = ['logout', 'profile', 'update-profile'];
+
+$isLoggedIn = isset($_SESSION['user_id']);
+
+if ($isLoggedIn && in_array($action, $guestOnly)) {
+    $_SESSION['flash'] = ['type' => 'info', 'message' => 'Vous êtes déjà connecté.'];
+    redirect('home');
+}
+
+if (!$isLoggedIn && in_array($action, $authOnly)) {
+    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Veuillez vous connecter pour accéder à cette page.'];
+    redirect('login-form');
+}
+
 $logicRoutes = [
     'register' => '/app/controllers/auth/registerController.php',
 	'login' => '/app/controllers/auth/loginController.php',
 	'logout' => '/app/controllers/auth/logoutController.php',
-    'setup'    => '/config/setup.php',
+	'profile' => '/app/controllers/user/getUserController.php',
+	'update-profile' => '/app/controllers/user/updateUserController.php',
+    'setup' => '/config/setup.php',
 ];
 
 $viewRoutes = [
-    'home'          => '/app/views/homeView.php',
+    'home' => '/app/views/homeView.php',
     'register-form' => '/app/views/auth/registerView.php',
-	'login-form' => '/app/views/auth/loginView.php'
+	'login-form' => '/app/views/auth/loginView.php',
 ];
 
 // ------Logic------

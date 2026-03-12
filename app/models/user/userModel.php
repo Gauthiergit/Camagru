@@ -68,4 +68,51 @@ class UserModel {
 
 	    session_destroy();
 	}
+
+	public function getUserById($id) {
+	    $dbRequest = $this->db->prepare("SELECT id, username, email, is_verified FROM users WHERE id = ?");
+	    $dbRequest->execute([$id]);
+	    return $dbRequest->fetch(PDO::FETCH_ASSOC);
+	}
+
+	public function updateUsername($id, $username) {
+	    $selectRequest = $this->db->prepare("SELECT id FROM users WHERE username = ? AND id != ?");
+	    $selectRequest->execute([$username, $id]);
+	    if ($selectRequest->fetch()) {
+	        return "Ce pseudo est déjà utilisé.";
+	    }
+
+	    $updateRequest = $this->db->prepare("UPDATE users SET username = ? WHERE id = ?");
+	    return $updateRequest->execute([$username, $id]) ? true : "Erreur lors de la mise à jour.";
+	}
+
+	public function updateEmail($userId, $newEmail, $password) {
+	    $user = $this->getUserById($userId);
+
+	    if (!password_verify($password, $user['password'])) {
+	        return "L'ancien mot de passe est incorrect.";
+	    }
+
+	    if ($user['email'] !== $newEmail) {
+	        $newToken = bin2hex(random_bytes(16));
+	        $updateRequest = $this->db->prepare("UPDATE users SET email = ?, is_verified = false, token = ? WHERE id = ?");
+	        $updateRequest->execute([$newEmail, $newToken, $userId]);
+	        
+	        // C'est ici qu'on déclencherait l'envoi du mail
+	        // sendVerificationEmail($newEmail, $newToken);
+	    }
+	    return true;
+	}
+
+	public function updatePassword($id, $oldPassword, $newPassword) {
+	    $user = $this->getUserById($id);
+
+	    if (!password_verify($oldPassword, $user['password'])) {
+	        return "L'ancien mot de passe est incorrect.";
+	    }
+
+	    $newHash = password_hash($newPassword, PASSWORD_BCRYPT);
+	    $updateRequest = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
+	    return $updateRequest->execute([$newHash, $id]) ? true : "Erreur lors du changement de mot de passe.";
+	}
 }

@@ -3,7 +3,11 @@ version: '3.8'
 services:
   # Le serveur Web et PHP
   php:
-    build: ./docker/php
+    build:
+      context: ./docker/php
+      args:
+        - SMTP_USER=${SMTP_USER}
+        - SMTP_PASS=${SMTP_PASS}
     container_name: camagru_php_app
     ports:
       - "8080:80"
@@ -15,6 +19,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
+      - SMTP_USER=${SMTP_USER}
     depends_on:
       - db
 

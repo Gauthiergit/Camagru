@@ -1,9 +1,13 @@
 <?php
-class UserModel {
+require_once ROOT . "/app/services/mail/mailService.php";
+
+class UserService {
     private $db;
+	private $mailService;
 
     public function __construct($pdo) {
         $this->db = $pdo;
+		$this->mailService = new MailService();
     }
 
     public function register($username, $email, $password, $confirm) {
@@ -25,54 +29,31 @@ class UserModel {
  
         // 3. Hachage et Insertion
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+		$token = bin2hex(random_bytes(16));
         
         try {
-            $insertRequest = $this->db->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-            $insertRequest->execute([$username, $email, $hashedPassword]);
+            $insertRequest = $this->db->prepare("INSERT INTO users (username, email, password, token) VALUES (?, ?, ?, ?)");
+            $insertRequest->execute([$username, $email, $hashedPassword, $token]);
+			$this->mailService->sendVerificationEmail($email, $token);
             return true;
         } catch (PDOException $e) {
             return "Erreur lors de l'enregistrement : " . $e->getMessage();
-        }
+        } catch (Exception $mailError) {
+			return "Erreur lors de l'envoie de l'email: " . $mailError->getMessage();
+		}
     }
-
-	public function login($login, $password) {
-		$dbRequest = $this->db->prepare("SELECT	* FROM users WHERE username = ? OR email = ?");
-		$dbRequest->execute([$login, $login]);
-		$user = $dbRequest->fetch(PDO::FETCH_ASSOC);
-
-	    if (!$user) {
-	        return "Identifiants invalides.";
-	    }
-
-	    if (!password_verify($password, $user['password'])) {
-	        return "Identifiants invalides.";
-	    }
-
-		// if ($user['is_verified'] === false) {
-	    //     return "Veuillez confirmer votre compte par email avant de vous connecter.";
-	    // }
-
-		return $user;
-	}
-
-	public function logout() {
-	    $_SESSION = [];
-
-	    if (ini_get("session.use_cookies")) {
-	        $params = session_get_cookie_params();
-	        setcookie(session_name(), '', time() - 42000,
-	            $params["path"], $params["domain"],
-	            $params["secure"], $params["httponly"]
-	        );
-	    }
-
-	    session_destroy();
-	}
 
 	public function getUserById($id) {
 	    $dbRequest = $this->db->prepare("SELECT id, username, email, is_verified FROM users WHERE id = ?");
 	    $dbRequest->execute([$id]);
 	    return $dbRequest->fetch(PDO::FETCH_ASSOC);
+	}
+
+	public function getUserPasswordHash($id) {
+		$dbRequest = $this->db->prepare("SELECT password FROM users WHERE id = ?");
+		$dbRequest->execute([$id]);
+		return $dbRequest->fetch(PDO::FETCH_ASSOC)['password'];
 	}
 
 	public function updateUsername($id, $username) {
@@ -87,9 +68,10 @@ class UserModel {
 	}
 
 	public function updateEmail($userId, $newEmail, $password) {
-	    $user = $this->getUserById($userId);
+	    $userPassword = $this->getUserPasswordHash($userId);
+		$user = $this->getUserById($userId);
 
-	    if (!password_verify($password, $user['password'])) {
+	    if (!password_verify($password, $userPassword)) {
 	        return "L'ancien mot de passe est incorrect.";
 	    }
 
@@ -98,16 +80,19 @@ class UserModel {
 	        $updateRequest = $this->db->prepare("UPDATE users SET email = ?, is_verified = false, token = ? WHERE id = ?");
 	        $updateRequest->execute([$newEmail, $newToken, $userId]);
 	        
-	        // C'est ici qu'on déclencherait l'envoi du mail
-	        // sendVerificationEmail($newEmail, $newToken);
+	        try {
+				$this->mailService->sendVerificationEmail($newEmail, $newToken);
+			} catch (Exception $mailError) {
+				return "Erreur lors de l'envoie de l'email: " . $mailError->getMessage();
+			}
 	    }
 	    return true;
 	}
 
 	public function updatePassword($id, $oldPassword, $newPassword) {
-	    $user = $this->getUserById($id);
+	    $userPassword = $this->getUserPasswordHash($id);
 
-	    if (!password_verify($oldPassword, $user['password'])) {
+	    if (!password_verify($oldPassword, $userPassword)) {
 	        return "L'ancien mot de passe est incorrect.";
 	    }
 

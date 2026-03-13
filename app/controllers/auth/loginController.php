@@ -1,14 +1,14 @@
 <?php
-require_once ROOT . "/app/models/user/userModel.php";
+require_once ROOT . "/app/services/auth/authService.php";
 require_once ROOT . '/app/core/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $pdo = Database::getPDO();
 
-    $userModel = new UserModel($pdo);
+    $authService = new AuthService($pdo);
 
-    $result = $userModel->login(
+    $result = $authService->login(
         $_POST['login'],
         $_POST['password'],
     );

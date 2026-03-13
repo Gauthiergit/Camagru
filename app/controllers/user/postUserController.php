@@ -1,15 +1,15 @@
 <?php
 
-require_once ROOT . "/app/models/user/userModel.php";
+require_once ROOT . "/app/services/user/userService.php";
 require_once ROOT . '/app/core/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $pdo = Database::getPDO();
 
-    $userModel = new UserModel($pdo);
+    $userService = new UserService($pdo);
 
-    $result = $userModel->register(
+    $result = $userService->register(
         $_POST['username'],
         $_POST['email'],
         $_POST['password'],

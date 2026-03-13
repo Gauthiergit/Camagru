@@ -23,11 +23,12 @@ if (!$isLoggedIn && in_array($action, $authOnly)) {
 }
 
 $logicRoutes = [
-    'register' => '/app/controllers/auth/registerController.php',
+    'register' => '/app/controllers/user/postUserController.php',
 	'login' => '/app/controllers/auth/loginController.php',
 	'logout' => '/app/controllers/auth/logoutController.php',
 	'profile' => '/app/controllers/user/getUserController.php',
 	'update-profile' => '/app/controllers/user/updateUserController.php',
+	'verify-email' => '/app/controllers/auth/verifyEmailController.php',
     'setup' => '/config/setup.php',
 ];
 

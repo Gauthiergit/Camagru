@@ -52,4 +52,35 @@ class AuthService {
 		}
 		return false;
 	}
+
+	public function resetPassword($userId, $newPassword) {
+		if (!$this->isValidPassword($newPassword)) {
+	        return "Le mot de passe doit contenir au minimum 8 caractères, un chiffre, une majuscule, une minuscule et un caractère spécial.";
+	    }
+	    $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+	    $resetRequest = $this->db->prepare("UPDATE users SET password = ?, reset_token = NULL WHERE id = ?");
+	    $resetRequest->execute([$hashedPassword, $userId]);
+		return true;
+	}
+
+	public function setResetToken($email) {
+	    $token = bin2hex(random_bytes(32));
+	    $resetRequest = $this->db->prepare("UPDATE users SET reset_token = ? WHERE email = ?");
+	    return $resetRequest->execute([$token, $email]) ? $token : false;
+	}
+
+	public function isValidPassword($password) {
+	    // Explication de la regex :
+	    // ^               : Début de la chaîne
+	    // (?=.*[a-z])     : Au moins une minuscule
+	    // (?=.*[A-Z])     : Au moins une majuscule
+	    // (?=.*[0-9])     : Au moins un chiffre (optionnel mais conseillé)
+	    // (?=.*[!@#$%^&*]) : Au moins un caractère spécial parmi cette liste
+	    // .{8,}           : Au moins 8 caractères au total
+	    // $               : Fin de la chaîne
+	    
+	    $regex = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/';
+	    
+	    return preg_match($regex, $password);
+	}
 }

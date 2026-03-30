@@ -13,6 +13,7 @@ try {
         email VARCHAR(100) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
         token VARCHAR(255),
+		reset_token VARCHAR(255) DEFAULT NULL,
         is_verified BOOLEAN DEFAULT FALSE
     )";
     

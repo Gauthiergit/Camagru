@@ -29,6 +29,8 @@ $logicRoutes = [
 	'profile' => '/app/controllers/user/getUserController.php',
 	'update-profile' => '/app/controllers/user/updateUserController.php',
 	'verify-email' => '/app/controllers/auth/verifyEmailController.php',
+	'forget-password' => '/app/controllers/auth/forgetPasswordController.php',
+	'reset-password' => '/app/controllers/auth/resetPasswordController.php',
     'setup' => '/config/setup.php',
 ];
 
@@ -36,6 +38,7 @@ $viewRoutes = [
     'home' => '/app/views/homeView.php',
     'register-form' => '/app/views/auth/registerView.php',
 	'login-form' => '/app/views/auth/loginView.php',
+	'forget-password-form' => '/app/views/auth/forgetPasswordView.php'
 ];
 
 // ------Logic------

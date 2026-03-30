@@ -1,13 +1,16 @@
 <?php
 require_once ROOT . "/app/services/mail/mailService.php";
+require_once ROOT . "/app/services/auth/authService.php";
 
 class UserService {
     private $db;
 	private $mailService;
+	private $authService;
 
     public function __construct($pdo) {
         $this->db = $pdo;
 		$this->mailService = new MailService();
+		$this->authService = new AuthService($pdo);
     }
 
     public function register($username, $email, $password, $confirm) {
@@ -16,9 +19,9 @@ class UserService {
             return "Les mots de passe ne correspondent pas.";
         }
 
-        if (strlen($password) < 8) {
-            return "Le mot de passe doit faire au moins 8 caractères.";
-        }
+        if (!$this->authService->isValidPassword($password)) {
+	        return "Le mot de passe doit contenir au minimum 8 caractères, un chiffre, une majuscule, une minuscule et un caractère spécial.";
+	    }
 
         // 2. Vérifier si l'utilisateur existe déjà
         $dbRequest = $this->db->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
@@ -43,6 +46,12 @@ class UserService {
 			return "Erreur lors de l'envoie de l'email: " . $mailError->getMessage();
 		}
     }
+
+	public function getUserByResetToken($token) {
+	    $dbRequest = $this->db->prepare("SELECT id FROM users WHERE reset_token = ?");
+	    $dbRequest->execute([$token]);
+	    return $dbRequest->fetch();
+	}
 
 	public function getUserById($id) {
 	    $dbRequest = $this->db->prepare("SELECT id, username, email, is_verified FROM users WHERE id = ?");
@@ -94,6 +103,10 @@ class UserService {
 
 	    if (!password_verify($oldPassword, $userPassword)) {
 	        return "L'ancien mot de passe est incorrect.";
+	    }
+
+		if (!$this->authService->isValidPassword($newPassword)) {
+	        return "Le mot de passe doit contenir au minimum 8 caractères, un chiffre, une majuscule, une minuscule et un caractère spécial.";
 	    }
 
 	    $newHash = password_hash($newPassword, PASSWORD_BCRYPT);

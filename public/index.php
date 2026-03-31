@@ -4,17 +4,20 @@ session_start();
 
 require_once ROOT . "/app/utils/functions.php";
 
-$action = $_GET['action'] ?? 'home';
+$action = $_GET['action'] ?? 'studio';
 
 $guestOnly = ['login-form', 'register-form', 'login', 'register'];
 
-$authOnly = ['logout', 'profile', 'update-profile'];
+$authOnly = ['logout', 'profile', 'update-profile', 'upload-post'];
 
 $isLoggedIn = isset($_SESSION['user_id']);
 
+if (!$isLoggedIn && $action === 'studio')
+	redirect('home');
+
 if ($isLoggedIn && in_array($action, $guestOnly)) {
     $_SESSION['flash'] = ['type' => 'info', 'message' => 'Vous êtes déjà connecté.'];
-    redirect('home');
+    redirect('studio');
 }
 
 if (!$isLoggedIn && in_array($action, $authOnly)) {
@@ -31,6 +34,8 @@ $logicRoutes = [
 	'verify-email' => '/app/controllers/auth/verifyEmailController.php',
 	'forget-password' => '/app/controllers/auth/forgetPasswordController.php',
 	'reset-password' => '/app/controllers/auth/resetPasswordController.php',
+	'studio' => '/app/controllers/user/userStudioController.php',
+	'upload-post' => '/app/controllers/post/uploadPostController.php',
     'setup' => '/config/setup.php',
 ];
 

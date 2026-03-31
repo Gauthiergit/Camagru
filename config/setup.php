@@ -16,8 +16,17 @@ try {
 		reset_token VARCHAR(255) DEFAULT NULL,
         is_verified BOOLEAN DEFAULT FALSE
     )";
-    
     $pdo->exec($sql);
+
+	$sql = "CREATE TABLE IF NOT EXISTS posts (
+	    id SERIAL PRIMARY KEY,
+	    user_id INT NOT NULL,
+	    filename VARCHAR(255) NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+	)";
+	$pdo->exec($sql);
+
     echo "Félicitations ! Docker est lié et la table 'users' est prête sur Postgres.";
 
 } catch (PDOException $e) {

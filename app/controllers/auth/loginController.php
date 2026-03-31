@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['username'] = $result['username'];
         
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Ravi de vous revoir, ' . $result['username'] . ' !'];
-        redirect('home');
+        redirect('studio');
     } else {
         $_SESSION['flash'] = ['type' => 'danger', 'message' => $result];
         redirect('login-form');

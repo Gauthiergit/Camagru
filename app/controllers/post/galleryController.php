@@ -10,7 +10,8 @@ if ($page < 1) $page = 1;
 $offset = ($page - 1) * $limit;
 
 $postService = new PostService(Database::getPDO());
-$posts = $postService->getPaginatedPosts($limit, $offset);
+$currentUserId = $_SESSION['user_id'] ?? 0;
+$posts = $postService->getPaginatedPosts($limit, $offset, $currentUserId);
 $totalPosts = $postService->getTotalPostsCount();
 
 $totalPages = ceil($totalPosts / $limit);

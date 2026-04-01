@@ -7,7 +7,7 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Création de la table users (Syntaxe Postgres : SERIAL pour l'auto-increment)
-    $sql = "CREATE TABLE IF NOT EXISTS users (
+    $usersTable = "CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         username VARCHAR(50) NOT NULL UNIQUE,
         email VARCHAR(100) NOT NULL UNIQUE,
@@ -16,18 +16,40 @@ try {
 		reset_token VARCHAR(255) DEFAULT NULL,
         is_verified BOOLEAN DEFAULT FALSE
     )";
-    $pdo->exec($sql);
+    $pdo->exec($usersTable);
 
-	$sql = "CREATE TABLE IF NOT EXISTS posts (
+	$postsTable = "CREATE TABLE IF NOT EXISTS posts (
 	    id SERIAL PRIMARY KEY,
 	    user_id INT NOT NULL,
 	    filename VARCHAR(255) NOT NULL,
+		likes_count INT NOT NULL DEFAULT 0,
 	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 	)";
-	$pdo->exec($sql);
+	$pdo->exec($postsTable);
 
-    echo "Félicitations ! Docker est lié et la table 'users' est prête sur Postgres.";
+	$likesTable = "CREATE TABLE IF NOT EXISTS likes (
+	    id SERIAL PRIMARY KEY,
+	    user_id INT NOT NULL,
+	    post_id INT NOT NULL,
+	    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+	    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+	    UNIQUE (user_id, post_id)
+	)";
+	$pdo->exec($likesTable);
+
+	$commentsTable = "CREATE TABLE IF NOT EXISTS comments (
+	    id SERIAL PRIMARY KEY,
+	    user_id INT NOT NULL,
+	    post_id INT NOT NULL,
+	    content TEXT NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+	    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+	)";
+	$pdo->exec($commentsTable);
+
+    echo "Félicitations ! Docker est lié et les tables sont prêtes sur Postgres.";
 
 } catch (PDOException $e) {
     die("Erreur : " . $e->getMessage());

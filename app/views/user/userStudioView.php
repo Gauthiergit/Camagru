@@ -40,4 +40,4 @@
     <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
 </div>
 
-<script src="/js/camera.js"></script>
+<script type="module" src="/js/camera.js"></script>

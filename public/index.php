@@ -37,6 +37,7 @@ $logicRoutes = [
 	'studio' => '/app/controllers/user/userStudioController.php',
 	'upload-post' => '/app/controllers/post/uploadPostController.php',
 	'gallery' => '/app/controllers/post/galleryController.php',
+	'like' => '/app/controllers/post/likeController.php',
     'setup' => '/config/setup.php',
 ];
 

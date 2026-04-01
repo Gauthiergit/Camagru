@@ -1,3 +1,5 @@
+import { showToast } from './utils.js';
+
 document.addEventListener("DOMContentLoaded", () => {
 	const video = document.getElementById('video');
 	const errorMsg = document.getElementById('camera-error');
@@ -207,23 +209,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		sendToServer(dataToSend);
 	});
 
-	function showToast(message, type = 'success') {
-	    const container = document.getElementById('toast-container');
-	    const toast = document.createElement('div');
-	    
-	    toast.className = `toast ${type}`;
-	    toast.innerText = message;
-	    
-	    container.appendChild(toast);
-
-	    // On retire le toast après 3 secondes
-	    setTimeout(() => {
-	        toast.style.opacity = '0';
-	        toast.style.transition = 'opacity 0.5s ease';
-	        setTimeout(() => toast.remove(), 500);
-	    }, 3000);
-	}
-
 	function sendToServer(imageDatas) {
 
 		fetch('/index.php?action=upload-post', {
@@ -231,24 +216,24 @@ document.addEventListener("DOMContentLoaded", () => {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(imageDatas)
 		})
-			.then(async (res) => {
-				const data = await res.json().catch(() => null);
-				if (!res.ok) {
-					const message = data?.message || `Erreur HTTP ${res.status}`;
-					throw new Error(message);
-				}
-				return data;
-			})
-			.then((res) => {
-				if (res && res.success) {
-					showToast("Photo sauvegardée !");
-				} else {
-					showToast("Erreur : " + (res?.message || "Réponse serveur invalide"), 'error');
-				}
-			})
-			.catch((err) => {
-				console.error("Upload échoué:", err);
-				showToast("Erreur lors de l'envoi : " + err.message, 'error');
-			});
+		.then(async (res) => {
+			const data = await res.json().catch(() => null);
+			if (!res.ok) {
+				const message = data?.message || `Erreur HTTP ${res.status}`;
+				throw new Error(message);
+			}
+			return data;
+		})
+		.then((res) => {
+			if (res && res.success) {
+				showToast("Photo sauvegardée !");
+			} else {
+				showToast("Erreur : " + (res?.message || "Réponse serveur invalide"), 'error');
+			}
+		})
+		.catch((err) => {
+			console.error("Upload échoué:", err);
+			showToast("Erreur lors de l'envoi : " + err.message, 'error');
+		});
 	}
 });

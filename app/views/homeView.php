@@ -6,8 +6,3 @@
         <a href="/index.php?action=register-form" class="cta">Commencer l'aventure</a>
     </div>
 </section>
-
-<section class="latest-photos">
-    <h2>Dernières publications</h2>
-    <p>(Les photos apparaîtront ici quand on aura codé la galerie !)</p>
-</section>

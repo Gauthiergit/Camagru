@@ -47,4 +47,18 @@ class PostService {
 		imagedestroy($background);
 		imagedestroy($sticker);
 	}
+
+	public function getPaginatedPosts($limit, $offset) {
+	    $dbRequest = $this->db->prepare("SELECT * FROM posts ORDER BY created_at DESC LIMIT :limit OFFSET :offset");
+	    
+	    $dbRequest->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+	    $dbRequest->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+	    $dbRequest->execute();
+	    
+	    return $dbRequest->fetchAll();
+	}
+
+	public function getTotalPostsCount() {
+	    return $this->db->query("SELECT COUNT(*) FROM posts")->fetchColumn();
+	}
 }

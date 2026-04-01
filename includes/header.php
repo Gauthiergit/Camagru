@@ -12,7 +12,7 @@
             <a href="index.php" class="logo">📷 CAMAGRU</a>
             <div class="menu">
                 <a href="index.php">Accueil</a>
-                <a href="gallery.php">Galerie</a>
+                <a href="/index.php?action=gallery">Galerie</a>
 				<?php if (isset($_SESSION['user_id'])): ?>
 		            <span class="user-greeting">Salut, <strong><?php echo htmlspecialchars($_SESSION['username']); ?></strong> !</span>
 		            <a href="/index.php?action=profile">Mon Profil</a>

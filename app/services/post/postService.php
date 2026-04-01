@@ -20,10 +20,14 @@ class PostService {
 
 		// 3. Montage avec GD (Resampled pour la qualité)
 		list($origW, $origH) = getimagesize($stickerPath);
+		$positionX = (int) round((float) $imageDatas['x']);
+		$positionY = (int) round((float) $imageDatas['y']);
+		$width = (int) round((float) $imageDatas['w']);
+		$height = (int) round((float) $imageDatas['h']);
 		imagecopyresampled(
 		    $background, $sticker,
-		    $imageDatas['x'], $imageDatas['y'], 0, 0,
-		    $imageDatas['w'], $imageDatas['h'], $origW, $origH
+		    $positionX, $positionY, 0, 0,
+		    $width, $height, $origW, $origH
 		);
 
 		// 4. Sauvegarder le fichier

@@ -1,4 +1,5 @@
 <div class="camera-container">
+	<div id="toast-container" class="toast-container"></div>
 	<h2>Studio Photo</h2>
     <p id="camera-error" class="alert alert-danger" style="display:none; margin-bottom: 10px;"></p>
     <div class="main-capture" style="position:relative; width:640px; max-width:100%;">

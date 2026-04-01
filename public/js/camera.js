@@ -74,6 +74,23 @@ document.addEventListener("DOMContentLoaded", () => {
 		requestAnimationFrame(drawScene);
 	}
 
+	function buildImageWithoutGuides() {
+		const exportCanvas = document.createElement('canvas');
+		exportCanvas.width = canvas.width;
+		exportCanvas.height = canvas.height;
+		const exportCtx = exportCanvas.getContext('2d');
+
+		if (!exportCtx) {
+			return null;
+		}
+
+		// Le canvas d'export ne contient que la vidéo + sticker, sans cadre cyan.
+		exportCtx.drawImage(video, 0, 0, exportCanvas.width, exportCanvas.height);
+		exportCtx.drawImage(currentStickerImg, stickerData.x, stickerData.y, stickerData.w, stickerData.h);
+
+		return exportCanvas.toDataURL('image/png');
+	}
+
 	// Lancer la boucle dès que la vidéo est prête
 	video.addEventListener('play', drawScene);
 
@@ -168,9 +185,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
-		// Comme on dessine déjà tout dans le canvas visible,
-		// il suffit de le transformer en base64 !
-		const imageData = canvas.toDataURL('image/png');
+		const imageData = buildImageWithoutGuides();
+		if (!imageData) {
+			alert("Impossible de générer l'image à envoyer.");
+			return;
+		}
 
 		// MAIS ATTENTION : Pour le PHP, il faut envoyer les coordonnées relatives
 		// car le PHP va refaire le montage proprement avec GD.
@@ -187,6 +206,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		sendToServer(dataToSend);
 	});
+
+	function showToast(message, type = 'success') {
+	    const container = document.getElementById('toast-container');
+	    const toast = document.createElement('div');
+	    
+	    toast.className = `toast ${type}`;
+	    toast.innerText = message;
+	    
+	    container.appendChild(toast);
+
+	    // On retire le toast après 3 secondes
+	    setTimeout(() => {
+	        toast.style.opacity = '0';
+	        toast.style.transition = 'opacity 0.5s ease';
+	        setTimeout(() => toast.remove(), 500);
+	    }, 3000);
+	}
 
 	function sendToServer(imageDatas) {
 
@@ -205,14 +241,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			})
 			.then((res) => {
 				if (res && res.success) {
-					alert("Photo sauvegardée !");
+					showToast("Photo sauvegardée !");
 				} else {
-					alert("Erreur : " + (res?.message || "Réponse serveur invalide"));
+					showToast("Erreur : " + (res?.message || "Réponse serveur invalide"), 'error');
 				}
 			})
 			.catch((err) => {
 				console.error("Upload échoué:", err);
-				alert("Erreur lors de l'envoi : " + err.message);
+				showToast("Erreur lors de l'envoi : " + err.message, 'error');
 			});
 	}
 });

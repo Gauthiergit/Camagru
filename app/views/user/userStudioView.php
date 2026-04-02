@@ -1,8 +1,8 @@
 <div class="camera-container">
 	<div id="toast-container" class="toast-container"></div>
 	<h2>Studio Photo</h2>
-    <p id="camera-error" class="alert alert-danger" style="display:none; margin-bottom: 10px;"></p>
-    <div class="main-capture" style="position:relative; width:640px; max-width:100%;">
+	<p id="camera-error" class="alert alert-danger" style="display:none; margin-bottom: 10px;"></p>
+	<div class="main-capture" style="position:relative; width:640px; max-width:100%;">
         <video id="video" width="640" height="480" autoplay playsinline style="display:none";></video>
         <canvas id="renderCanvas" width="640" height="480" style="border:1px solid black; cursor:move;"></canvas>
     </div>
@@ -34,6 +34,8 @@
     </div>
 
     <div class="controls">
+        <input id="file-input" type="file" accept="image/*" style="display:none;">
+        <button id="select-file-btn" class="btn-primary" type="button">Choisir une image</button>
         <button id="snap" class="btn-primary" disabled>2. Prendre la photo</button>
     </div>
 

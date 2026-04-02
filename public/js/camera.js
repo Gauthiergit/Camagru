@@ -1,6 +1,6 @@
 import { showToast } from './utils.js';
 
-document.addEventListener("DOMContentLoaded", () => {
+const initStudioCamera = () => {
 	const video = document.getElementById('video');
 	const errorMsg = document.getElementById('camera-error');
 
@@ -8,9 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	const stickers = document.querySelectorAll('input[name="sticker"]');
 	const canvas = document.getElementById('renderCanvas');
 	const ctx = canvas.getContext('2d');
+	const fileInput = document.getElementById('file-input');
+	const selectFileBtn = document.getElementById('select-file-btn');
 
-	if (!video || !snap || !canvas) {
-		console.error("Elements camera introuvables dans la page.");
+	let videoStream = null;
+
+	let uploadedImg = null; // Contiendra l'objet Image si l'utilisateur upload
+
+	if (!video || !snap || !canvas  || !fileInput || !selectFileBtn) {
+		console.error("Elements camera int rouvables dans la page.");
 		return;
 	}
 
@@ -43,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		})
 			.then((stream) => {
 				// On injecte le flux dans l'élément vidéo
+				videoStream = stream;
 				video.srcObject = stream;
 				video.play();
 			})
@@ -54,9 +61,72 @@ document.addEventListener("DOMContentLoaded", () => {
 		showCameraError("Votre navigateur ne supporte pas l'accès caméra.");
 	}
 
+	// 2. Selection de fichier via bouton.
+	selectFileBtn.addEventListener('click', () => {
+		fileInput.click();
+	});
+
+	fileInput.addEventListener('change', (e) => {
+		const file = e.target.files?.[0];
+
+		if (!file) {
+			return;
+		}
+
+		if (!file.type.startsWith('image/')) {
+			showToast("Le fichier doit etre une image.", 'error');
+			fileInput.value = '';
+			return;
+		}
+
+		handleFile(file);
+		fileInput.value = '';
+	});
+
+	function handleFile(file) {
+		const reader = new FileReader();
+		reader.onerror = () => {
+			showToast("Impossible de lire ce fichier.", 'error');
+		};
+		reader.onload = (e) => {
+			const img = new Image();
+			img.onload = () => {
+				uploadedImg = img; // La variable utilisée dans ta boucle drawScene
+				stopCamera();      // On coupe la webcam
+				showToast("Image chargee, ajoute un sticker puis capture.");
+			};
+			img.onerror = () => {
+				showToast("Impossible de charger l'image.", 'error');
+			};
+			img.src = e.target.result;
+		};
+		reader.readAsDataURL(file);
+	}
+
+	function stopCamera() {
+		if (videoStream) {
+			// On arrête chaque piste (audio/vidéo) du flux
+			videoStream.getTracks().forEach(track => track.stop());
+			videoStream = null;
+		}
+	}
+
 	function drawScene() {
 		// a. Dessiner la vidéo en fond
-		ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		if (uploadedImg) {
+			// On dessine l'image uploadée (en l'adaptant au format 640x480)
+			const ratio = Math.min(canvas.width / uploadedImg.width, canvas.height / uploadedImg.height);
+			const newWidth = uploadedImg.width * ratio;
+			const newHeight = uploadedImg.height * ratio;
+			const x = (canvas.width - newWidth) / 2;
+			const y = (canvas.height - newHeight) / 2;
+			ctx.drawImage(uploadedImg, x, y, newWidth, newHeight);
+		} else if (video.srcObject) {
+			// On dessine le flux webcam
+			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+		}
 
 		// b. Dessiner le sticker si sélectionné
 		if (currentStickerImg) {
@@ -87,14 +157,23 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		// Le canvas d'export ne contient que la vidéo + sticker, sans cadre cyan.
-		exportCtx.drawImage(video, 0, 0, exportCanvas.width, exportCanvas.height);
+		if (uploadedImg) {
+			const ratio = Math.min(exportCanvas.width / uploadedImg.width, exportCanvas.height / uploadedImg.height);
+			const newWidth = uploadedImg.width * ratio;
+			const newHeight = uploadedImg.height * ratio;
+			const x = (exportCanvas.width - newWidth) / 2;
+			const y = (exportCanvas.height - newHeight) / 2;
+			exportCtx.drawImage(uploadedImg, x, y, newWidth, newHeight);
+		} else {
+			exportCtx.drawImage(video, 0, 0, exportCanvas.width, exportCanvas.height);
+		}
 		exportCtx.drawImage(currentStickerImg, stickerData.x, stickerData.y, stickerData.w, stickerData.h);
 
 		return exportCanvas.toDataURL('image/png');
 	}
 
-	// Lancer la boucle dès que la vidéo est prête
-	video.addEventListener('play', drawScene);
+	// Lancer la boucle de rendu meme si la webcam ne demarre pas.
+	requestAnimationFrame(drawScene);
 
 	// --- 3. SÉLECTION DU STICKER ---
 	stickers.forEach(input => {
@@ -216,24 +295,30 @@ document.addEventListener("DOMContentLoaded", () => {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(imageDatas)
 		})
-		.then(async (res) => {
-			const data = await res.json().catch(() => null);
-			if (!res.ok) {
-				const message = data?.message || `Erreur HTTP ${res.status}`;
-				throw new Error(message);
-			}
-			return data;
-		})
-		.then((res) => {
-			if (res && res.success) {
-				showToast("Photo sauvegardée !");
-			} else {
-				showToast("Erreur : " + (res?.message || "Réponse serveur invalide"), 'error');
-			}
-		})
-		.catch((err) => {
-			console.error("Upload échoué:", err);
-			showToast("Erreur lors de l'envoi : " + err.message, 'error');
-		});
+			.then(async (res) => {
+				const data = await res.json().catch(() => null);
+				if (!res.ok) {
+					const message = data?.message || `Erreur HTTP ${res.status}`;
+					throw new Error(message);
+				}
+				return data;
+			})
+			.then((res) => {
+				if (res && res.success) {
+					showToast("Photo sauvegardée !");
+				} else {
+					showToast("Erreur : " + (res?.message || "Réponse serveur invalide"), 'error');
+				}
+			})
+			.catch((err) => {
+				console.error("Upload échoué:", err);
+				showToast("Erreur lors de l'envoi : " + err.message, 'error');
+			});
 	}
-});
+};
+
+if (document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', initStudioCamera, { once: true });
+} else {
+	initStudioCamera();
+}

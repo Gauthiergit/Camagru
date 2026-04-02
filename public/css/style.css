@@ -191,3 +191,30 @@ footer {
 
 input:checked + .slider { background-color: #2ecc71; }
 input:checked + .slider:before { transform: translateX(26px); }
+
+/* camera */
+.main-capture {
+    position: relative;
+    width: 640px;
+    height: 480px;
+    border: 2px dashed #ccc;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f9f9f9;
+}
+
+/* Style quand on survole avec un fichier */
+.main-capture.drag-over {
+    border-color: #2ecc71;
+    background-color: rgba(46, 204, 113, 0.1);
+    transform: scale(1.02);
+}
+
+#drop-message {
+    position: absolute;
+    pointer-events: none; /* Pour que le message ne gêne pas le drag */
+    text-align: center;
+    color: #888;
+}

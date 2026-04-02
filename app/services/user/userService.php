@@ -54,7 +54,7 @@ class UserService {
 	}
 
 	public function getUserById($id) {
-	    $dbRequest = $this->db->prepare("SELECT id, username, email, is_verified FROM users WHERE id = ?");
+	    $dbRequest = $this->db->prepare("SELECT id, username, email, is_verified, wants_notifs FROM users WHERE id = ?");
 	    $dbRequest->execute([$id]);
 	    return $dbRequest->fetch(PDO::FETCH_ASSOC);
 	}
@@ -112,5 +112,10 @@ class UserService {
 	    $newHash = password_hash($newPassword, PASSWORD_BCRYPT);
 	    $updateRequest = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
 	    return $updateRequest->execute([$newHash, $id]) ? true : "Erreur lors du changement de mot de passe.";
+	}
+
+	public function updateNotificationSettings($userId, $wantsNotifs) {
+	    $dbRequest = $this->db->prepare("UPDATE users SET wants_notifs = ? WHERE id = ?");
+	    return $dbRequest->execute([$wantsNotifs ? 1 : 0, $userId]);
 	}
 }

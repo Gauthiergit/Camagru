@@ -22,8 +22,10 @@
 
 		        <div class="comments-section">
 		            <div id="comments-list-<?= $post['id'] ?>">
-		                </div>
-		            
+						<?php foreach ($post['comments_list'] as $comment): ?>
+						    <p><strong><?= htmlspecialchars($comment['username']) ?></strong> : <?= htmlspecialchars($comment['content']) ?></p>
+						<?php endforeach; ?>
+                	</div> 
 		            <?php if (isset($_SESSION['user_id'])): ?>
 		                <form action="/index.php?action=comment" method="POST" class="comment-form">
 		                    <input type="hidden" name="post_id" value="<?= $post['id'] ?>">

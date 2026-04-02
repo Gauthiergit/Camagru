@@ -12,6 +12,7 @@ try {
         username VARCHAR(50) NOT NULL UNIQUE,
         email VARCHAR(100) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
+		wants_notifs BOOLEAN DEFAULT TRUE,
         token VARCHAR(255),
 		reset_token VARCHAR(255) DEFAULT NULL,
         is_verified BOOLEAN DEFAULT FALSE

@@ -51,7 +51,17 @@ class PostService {
 	public function getPaginatedPosts($limit, $offset, $currentUserId) {
 		$sql = "SELECT 
                 p.*,
-                (SELECT COUNT(*) FROM likes WHERE post_id = p.id AND user_id = :uid) AS user_has_liked
+                (SELECT COUNT(*) FROM likes WHERE post_id = p.id AND user_id = :uid) AS user_has_liked,
+				(SELECT json_agg(
+		            json_build_object(
+		                'username', u.username,
+		                'content', c.content,
+		                'created_at', c.created_at
+            		))
+			        FROM comments c
+			        JOIN users u ON c.user_id = u.id
+			        WHERE c.post_id = p.id
+				) AS comments_list
             FROM posts AS p
             ORDER BY p.created_at DESC
             LIMIT :limit OFFSET :offset";
@@ -62,7 +72,13 @@ class PostService {
 		$dbRequest->bindValue(':uid', (int) $currentUserId, PDO::PARAM_INT);
 	    $dbRequest->execute();
 	    
-	    return $dbRequest->fetchAll(PDO::FETCH_ASSOC);
+		$posts = $dbRequest->fetchAll(PDO::FETCH_ASSOC);
+		foreach ($posts as &$post) {
+		    // Si la liste est vide, Postgres renvoie NULL, sinon on décode le JSON
+		    $post['comments_list'] = $post['comments_list'] ? json_decode($post['comments_list'], true) : [];
+		}
+
+	    return $posts;
 	}
 
 	public function getTotalPostsCount() {
@@ -89,7 +105,15 @@ class PostService {
 	}
 
 	public function addComment($userId, $postId, $content) {
-	    $stmt = $this->db->prepare("INSERT INTO comments (user_id, post_id, content) VALUES (?, ?, ?)");
-	    return $stmt->execute([$userId, $postId, htmlspecialchars($content)]);
+	    $insertRequest = $this->db->prepare("INSERT INTO comments (user_id, post_id, content) VALUES (?, ?, ?)");
+	    return $insertRequest->execute([$userId, $postId, htmlspecialchars($content)]);
+	}
+
+	public function getPostOwnerId($postId)
+	{
+		$dbRequest = $this->db->prepare("SELECT user_id FROM posts WHERE id = ?");
+		$dbRequest->execute([$postId]);
+		$result = $dbRequest->fetch(PDO::FETCH_ASSOC);
+		return $result['user_id'] ?? null;
 	}
 }

@@ -43,4 +43,23 @@ class MailService {
         	throw new Exception("L'envoi de l'email a échoué.");
     	}
 	}
+
+	public function sendNotification($email, $wantsNotif) {
+		if ($wantsNotif)
+		{
+			$subject = "Camagru - Notification";
+			
+			$message = "Bonjour,\n\nQuelqu'un a commenté votre post.\n";
+	
+			$headers = [
+				'From' => $this->email,
+				'Reply-To' => $this->email,
+				'X-Mailer' => 'PHP/' . phpversion()
+			];
+	
+			if (!mail($email, $subject, $message, $headers)) {
+				throw new Exception("L'envoi de l'email a échoué.");
+			}
+		}
+	}
 }

@@ -38,6 +38,8 @@ $logicRoutes = [
 	'upload-post' => '/app/controllers/post/uploadPostController.php',
 	'gallery' => '/app/controllers/post/galleryController.php',
 	'like' => '/app/controllers/post/likeController.php',
+	'comment' => '/app/controllers/post/commentController.php',
+	'update-notifs' => '/app/controllers/user/updateNotifsController.php',
     'setup' => '/config/setup.php',
 ];
 

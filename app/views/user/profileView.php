@@ -48,6 +48,22 @@
 		            <button type="submit" name="update_password">Changer le mot de passe</button>
 		        </form>
 		    </section>
+
+			<hr>
+
+			<section>
+				<h3>Préférences</h3>
+				<div class="settings-item">
+				    <label for="notif-toggle">Recevoir des notifications par email lors d'un nouveau commentaire</label>
+				    <label class="switch">
+				        <input type="checkbox" id="notif-toggle" 
+				               <?= $user['wants_notifs'] ? 'checked' : '' ?>>
+				        <span class="slider round"></span>
+				    </label>
+				</div>
+			</section>
 		</div>
     </section>
 </div>
+
+<script type="module" src="/js/settings.js"></script>

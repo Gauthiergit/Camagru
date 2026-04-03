@@ -1,4 +1,4 @@
-import { showToast } from './utils.js';
+import { showToast, showConfirmModal } from './utils.js';
 
 const initStudioCamera = () => {
 	const video = document.getElementById('video');
@@ -10,6 +10,7 @@ const initStudioCamera = () => {
 	const ctx = canvas.getContext('2d');
 	const fileInput = document.getElementById('file-input');
 	const selectFileBtn = document.getElementById('select-file-btn');
+	const sideGallery = document.getElementById('side-gallery');
 
 	let videoStream = null;
 
@@ -306,6 +307,13 @@ const initStudioCamera = () => {
 			.then((res) => {
 				if (res && res.success) {
 					showToast("Photo sauvegardée !");
+					const newPostHtml = `
+			            <div class="side-post">
+			                <img src="/uploads/${res.filename}" alt="Ma photo">
+							<button class="delete-btn" onclick="deletePost(${res.post_id})">×</button>
+			            </div>
+			        `;
+			        sideGallery.insertAdjacentHTML('afterbegin', newPostHtml);
 				} else {
 					showToast("Erreur : " + (res?.message || "Réponse serveur invalide"), 'error');
 				}
@@ -315,6 +323,43 @@ const initStudioCamera = () => {
 				showToast("Erreur lors de l'envoi : " + err.message, 'error');
 			});
 	}
+
+	window.deletePost = async function(postId) {
+	    const confirmed = await showConfirmModal(
+	        "Supprimer la photo", 
+	        "Cette action est irréversible. Voulez-vous continuer ?"
+	    );
+
+	    if (!confirmed) return;
+
+	    fetch('/index.php?action=delete-post', {
+	        method: 'POST',
+	        headers: { 'Content-Type': 'application/json' },
+	        body: JSON.stringify({ post_id: postId })
+	    })
+	    .then(res => res.json())
+	    .then(data => {
+	        if (data.success) {
+	            // Retirer l'élément de la sidebar
+	            const postElement = document.getElementById(`post-${postId}`);
+	            if (postElement) {
+	                // Petite animation de sortie optionnelle
+	                postElement.style.opacity = '0';
+	                postElement.style.transform = 'scale(0.8)';
+	                postElement.style.transition = 'all 0.3s ease';
+	                
+	                setTimeout(() => postElement.remove(), 300);
+	            }
+	            showToast("Photo supprimée avec succès", "success");
+	        } else {
+	            showToast(data.message, "error");
+	        }
+	    })
+	    .catch(err => {
+	        console.error(err);
+	        showToast("Une erreur est survenue", "error");
+	    });
+	};
 };
 
 if (document.readyState === 'loading') {

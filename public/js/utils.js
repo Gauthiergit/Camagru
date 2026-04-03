@@ -22,3 +22,27 @@ export function showToast(message, type = 'success') {
 		setTimeout(() => toast.remove(), 500);
 	}, 3000);
 }
+
+export function showConfirmModal(title, message) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('confirm-modal');
+        const btnConfirm = document.getElementById('modal-confirm');
+        const btnCancel = document.getElementById('modal-cancel');
+        
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-message').innerText = message;
+        
+        modal.style.display = 'flex';
+
+        const closeModal = (result) => {
+            modal.style.display = 'none';
+            // On retire les écouteurs pour éviter les fuites mémoire
+            btnConfirm.replaceWith(btnConfirm.cloneNode(true));
+            btnCancel.replaceWith(btnCancel.cloneNode(true));
+            resolve(result);
+        };
+
+        document.getElementById('modal-confirm').onclick = () => closeModal(true);
+        document.getElementById('modal-cancel').onclick = () => closeModal(false);
+    });
+}

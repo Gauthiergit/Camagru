@@ -1,5 +1,4 @@
 <div class="gallery-container">
-	<div id="toast-container" class="toast-container"></div>
     <h2>Galerie Camagru</h2>
 
 	<?php if (empty($posts)): ?>

@@ -39,7 +39,11 @@ class PostService {
 		    $insertRequest = $this->db->prepare("INSERT INTO posts (user_id, filename) VALUES (?, ?)");
 		    $insertRequest->execute([$_SESSION['user_id'], $filename]);
 
-		    echo json_encode(['success' => true]);
+			$getRequest = $this->db->prepare("SELECT id FROM posts WHERE filename = ?");
+			$getRequest->execute([$filename]);
+			$post = $getRequest->fetch(PDO::FETCH_ASSOC);
+
+		    echo json_encode(['success' => true, 'filename' => $filename, 'post_id' => $post['id']]);
 		} else {
 		    echo json_encode(['success' => false, 'message' => "Impossible d'écrire le fichier"]);
 		}
@@ -74,7 +78,6 @@ class PostService {
 	    
 		$posts = $dbRequest->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($posts as &$post) {
-		    // Si la liste est vide, Postgres renvoie NULL, sinon on décode le JSON
 		    $post['comments_list'] = $post['comments_list'] ? json_decode($post['comments_list'], true) : [];
 		}
 
@@ -115,5 +118,22 @@ class PostService {
 		$dbRequest->execute([$postId]);
 		$result = $dbRequest->fetch(PDO::FETCH_ASSOC);
 		return $result['user_id'] ?? null;
+	}
+
+	public function getUserPosts($userId) {
+	    $dbRequest = $this->db->prepare("SELECT * FROM posts WHERE user_id = ? ORDER BY created_at DESC");
+	    $dbRequest->execute([$userId]);
+	    return $dbRequest->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	public function getPostById($postId) {
+	    $dbRequest = $this->db->prepare("SELECT * FROM posts WHERE id = ?");
+	    $dbRequest->execute([$postId]);
+	    return $dbRequest->fetch(PDO::FETCH_ASSOC);
+	}
+
+	public function deletePost($postId) {
+	    $dbRequest = $this->db->prepare("DELETE FROM posts WHERE id = ?");
+	    return $dbRequest->execute([$postId]);
 	}
 }

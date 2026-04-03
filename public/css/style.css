@@ -134,6 +134,7 @@ nav {
 		flex-direction: column;
 		align-items: stretch;
 		gap: 12px;
+		align-items: center;
 	}
 
 	.menu {
@@ -147,6 +148,36 @@ nav {
 		min-height: 34px;
 		padding: 7px 12px;
 		font-size: 0.9rem;
+	}
+}
+
+@media (max-width: 390px) {
+	.menu {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px;
+		width: 100%;
+	}
+
+	.menu a,
+	.menu .logout-form,
+	.menu .user-greeting {
+		width: 100%;
+	}
+
+	.menu a,
+	.menu .btn-logout-link,
+	.menu .user-greeting {
+		justify-content: center;
+		text-align: center;
+	}
+
+	.menu .logout-form {
+		display: block;
+	}
+
+	.menu .btn-logout-link {
+		width: 100%;
 	}
 }
 

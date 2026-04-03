@@ -136,4 +136,35 @@ class PostService {
 	    $dbRequest = $this->db->prepare("DELETE FROM posts WHERE id = ?");
 	    return $dbRequest->execute([$postId]);
 	}
+
+	public function getPostDetails($postId, $currentUserId) {
+	    $sql = "SELECT 
+	                p.*, 
+	                u.username AS author,
+	                (SELECT COUNT(*) FROM likes WHERE post_id = p.id AND user_id = :uid) AS user_has_liked,
+	                (
+	                    SELECT json_agg(
+	                        json_build_object(
+	                            'username', cu.username,
+	                            'content', c.content,
+	                            'created_at', c.created_at
+	                        ) ORDER BY c.created_at ASC
+	                    )
+	                    FROM comments c
+	                    JOIN users cu ON c.user_id = cu.id
+	                    WHERE c.post_id = p.id
+	                ) AS comments_list
+	            FROM posts p
+	            JOIN users u ON p.user_id = u.id
+	            WHERE p.id = :pid";
+
+	    $dbRequest = $this->db->prepare($sql);
+	    $dbRequest->execute(['pid' => $postId, 'uid' => $currentUserId]);
+	    $post = $dbRequest->fetch(PDO::FETCH_ASSOC);
+
+	    if ($post) {
+	        $post['comments_list'] = $post['comments_list'] ? json_decode($post['comments_list'], true) : [];
+	    }
+	    return $post;
+	}
 }

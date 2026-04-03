@@ -1,11 +1,23 @@
-<div class="camera-container">
-	<h2>Studio Photo</h2>
-	<p id="camera-error" class="alert alert-danger" style="display:none; margin-bottom: 10px;"></p>
+<div class="studio-page">
+	<div class="studio-hero">
+		<span class="section-badge">Studio</span>
+		<h2>Studio Photo</h2>
+		<p>Crée ta photo, ajoute un sticker et publie ton montage en quelques clics.</p>
+	</div>
+
+	<p id="camera-error" class="alert alert-danger studio-error" style="display:none;"></p>
+
 	<div class="camera-layout">
-		<div class="camera-main">
-			<div class="main-capture" style="position:relative; width:640px; max-width:100%;">
-				<video id="video" width="640" height="480" autoplay playsinline style="display:none";></video>
+		<div class="camera-main studio-card">
+			<div class="main-capture">
+				<video id="video" width="640" height="480" autoplay playsinline style="display:none;"></video>
 				<canvas id="renderCanvas" width="640" height="480" style="border:1px solid black; cursor:move;"></canvas>
+			</div>
+
+			<div class="controls studio-controls">
+				<input id="file-input" type="file" accept="image/*" style="display:none;">
+				<button id="select-file-btn" class="btn-primary" type="button">Choisir une image</button>
+				<button id="snap" class="btn-primary" disabled>📸 Prendre la photo</button>
 			</div>
 	
 			<div class="stickers-selector">
@@ -18,16 +30,10 @@
 						</label>
 					<?php endforeach; ?>
 				</div>
-			</div>
-	
-			<div class="controls">
-				<input id="file-input" type="file" accept="image/*" style="display:none;">
-				<button id="select-file-btn" class="btn-primary" type="button">Choisir une image</button>
-				<button id="snap" class="btn-primary" disabled>2. Prendre la photo</button>
-			</div>
+			</div>	
 		</div>
 
-		<aside class="camera-sidebar">
+		<aside class="camera-sidebar studio-card">
 	        <h3>Mes dernières photos</h3>
 	        <div id="side-gallery" class="side-gallery">
 	            <?php foreach ($userPosts as $post): ?>

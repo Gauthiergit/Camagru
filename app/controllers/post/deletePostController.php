@@ -17,7 +17,6 @@ if ($postId) {
     $postService = new PostService(Database::getPDO());
     $post = $postService->getPostById($postId);
 
-    // Vérification de sécurité : le post existe et appartient à l'user
     if ($post && $post['user_id'] == $_SESSION['user_id']) {
         
         // 1. Supprimer le fichier physique

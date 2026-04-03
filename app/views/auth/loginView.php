@@ -15,6 +15,6 @@
         <button type="submit" class="btn-primary">Se connecter</button>
     </form>
     
-    <a href="/index.php?action=forget-password-form">Mot de passe oublié ?</a></p>
-    <p>Pas encore de compte ? <a href="/index.php?action=register-form">Inscrivez-vous</a></p>
+    <p class="auth-switch">Pas encore de compte ? <a href="/index.php?action=register-form">Inscrivez-vous</a></p>
+    <a class="forget-switch" href="/index.php?action=forget-password-form">Mot de passe oublié ?</a>
 </div>

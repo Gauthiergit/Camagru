@@ -41,6 +41,7 @@ $logicRoutes = [
 	'comment' => '/app/controllers/post/commentController.php',
 	'update-notifs' => '/app/controllers/user/updateNotifsController.php',
 	'delete-post' => '/app/controllers/post/deletePostController.php',
+	'post-detail' => '/app/controllers/post/getPostDetailController.php',
     'setup' => '/config/setup.php',
 ];
 

@@ -1,6 +1,6 @@
 <div id="toast-container" class="toast-container"></div>
 
-<div id="confirm-modal" class="modal-overlay" style="display:none;">
+<div id="confirm-modal" class="modal-overlay is-hidden">
     <div class="modal-content">
         <h3 id="modal-title">Confirmation</h3>
         <p id="modal-message">Êtes-vous sûr de vouloir faire cela ?</p>

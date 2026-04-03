@@ -23,6 +23,6 @@
 
         <button type="submit" class="btn-primary">S'inscrire</button>
     </form>
-    
-    <p>Déjà un compte ? <a href="/index.php?action=login-form">Connectez-vous</a></p>
+
+    <p class="auth-switch">Déjà un compte ? <a href="/index.php?action=login-form">Connectez-vous</a></p>
 </div>

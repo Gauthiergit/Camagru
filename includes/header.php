@@ -5,18 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camagru - 42</title>
     <link rel="stylesheet" href="/css/style.css">
+	<script src="https://kit.fontawesome.com/66ee37b62d.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <header>
         <nav>
-            <a href="index.php" class="logo">📷 CAMAGRU</a>
+            <a href="index.php" class="logo">
+				<img src="/assets/logo/logo.png" width="30" height="30" alt="Camagru">
+				<p>CAMAGRU</p>
+			</a>
             <div class="menu">
                 <a href="index.php">Accueil</a>
                 <a href="/index.php?action=gallery">Galerie</a>
 				<?php if (isset($_SESSION['user_id'])): ?>
-		            <span class="user-greeting">Salut, <strong><?php echo htmlspecialchars($_SESSION['username']); ?></strong> !</span>
 		            <a href="/index.php?action=profile">Mon Profil</a>
-		            <form action="/index.php?action=logout" method="POST" style="display: inline;">
+		            <span class="user-greeting"><strong>🟢<?php echo htmlspecialchars($_SESSION['username']); ?></strong></span>
+		            <form action="/index.php?action=logout" method="POST" class="logout-form">
 				        <button type="submit" class="btn-logout-link">Déconnexion</button>
 				    </form>
 		        <?php else: ?>

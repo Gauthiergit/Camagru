@@ -81,7 +81,7 @@ class UserService {
 		$user = $this->getUserById($userId);
 
 	    if (!password_verify($password, $userPassword)) {
-	        return "L'ancien mot de passe est incorrect.";
+	        return "Non autorisé";
 	    }
 
 	    if ($user['email'] !== $newEmail) {

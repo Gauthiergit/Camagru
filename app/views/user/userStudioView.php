@@ -38,7 +38,9 @@
 	        <div id="side-gallery" class="side-gallery">
 	            <?php foreach ($userPosts as $post): ?>
 	                <div class="side-post" id="post-<?= $post['id'] ?>">
-	                    <img src="/uploads/<?= $post['filename'] ?>" alt="Ma photo">
+						<a href="?action=post-detail&id=<?= $post['id'] ?>" class="post-link">
+							<img src="/uploads/<?= $post['filename'] ?>" alt="Ma photo">
+						</a>
 	                    <button class="delete-btn" onclick="deletePost(<?= $post['id'] ?>)">×</button>
 	                </div>
 	            <?php endforeach; ?>

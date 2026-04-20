@@ -17,16 +17,18 @@ if (!$user) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($_POST['password'] !== $_POST['confirm_password'])
+	{
         $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Les mots de passe ne correspondent pas.'];
-    
-	$authService = new AuthService($pdo);
-    $result = $authService->resetPassword($user['id'], $_POST['password']);
-    if ($result === true){
-		$_SESSION['flash'] = ['type' => 'success', 'message' => 'Mot de passe modifié ! Connectez-vous.'];
-		redirect('login-form');
-		exit;
 	} else {
-		$_SESSION['flash'] = ['type' => 'danger', 'message' => $result];
+		$authService = new AuthService($pdo);
+		$result = $authService->resetPassword($user['id'], $_POST['password']);
+		if ($result === true){
+			$_SESSION['flash'] = ['type' => 'success', 'message' => 'Mot de passe modifié ! Connectez-vous.'];
+			redirect('login-form');
+			exit;
+		} else {
+			$_SESSION['flash'] = ['type' => 'danger', 'message' => $result];
+		}
 	}
 }
 

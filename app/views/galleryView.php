@@ -28,14 +28,26 @@
 						<?php endif;?>
 			            <span class="like-count"><?= $post['likes_count'] ?></span>
 			        </button>
+					<button
+						class="comments-toggle-btn"
+						type="button"
+						aria-expanded="false"
+					>
+						<i class="fa-regular fa-comment"></i>
+						<span>Commentaires (<?= count($post['comments_list']) ?>)</span>
+					</button>
 		        </div>
 
-		        <div class="comments-section">
-		            <div id="comments-list-<?= $post['id'] ?>">
-						<?php foreach ($post['comments_list'] as $comment): ?>
-						    <p><strong><?= $comment['username'] ?></strong> : 
-							<?= $comment['content'] ?></p>
-						<?php endforeach; ?>
+		        <div class="comments-section is-collapsed">
+		            <div id="comments-list-<?= $post['id'] ?>" class="comments-list-scroll">
+						<?php if (empty($post['comments_list'])): ?>
+							<p class="no-comments-inline">Aucun commentaire pour le moment.</p>
+						<?php else: ?>
+							<?php foreach ($post['comments_list'] as $comment): ?>
+								<p><strong><?= $comment['username'] ?></strong> : 
+								<?= $comment['content'] ?></p>
+							<?php endforeach; ?>
+						<?php endif; ?>
                 	</div>
 		        </div>
 		    </div>

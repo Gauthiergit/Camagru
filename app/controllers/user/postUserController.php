@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 
     if ($result === true) {
-        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Compte créé !'];
+        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Compte créé ! Veuillez vérifier vos e-mails'];
         redirect("login-form");
     } else {
         $_SESSION['flash'] = ['type' => 'danger', 'message' => $result];

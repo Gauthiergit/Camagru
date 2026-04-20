@@ -15,7 +15,6 @@ export function showToast(message, type = 'success') {
 
 	container.appendChild(toast);
 
-	// On retire le toast après 3 secondes
 	setTimeout(() => {
 		toast.style.opacity = '0';
 		toast.style.transition = 'opacity 0.5s ease';
@@ -36,7 +35,6 @@ export function showConfirmModal(title, message) {
 
         const closeModal = (result) => {
             modal.style.display = 'none';
-            // On retire les écouteurs pour éviter les fuites mémoire
             btnConfirm.replaceWith(btnConfirm.cloneNode(true));
             btnCancel.replaceWith(btnCancel.cloneNode(true));
             resolve(result);

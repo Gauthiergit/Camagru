@@ -5,8 +5,36 @@
 
     <form action="/index.php?action=reset-password" method="POST" class="profile-form">
         <input type="hidden" name="token" value="<?php echo $token; ?>">
-        <input type="password" name="password" placeholder="Nouveau mot de passe" required>
-        <input type="password" name="confirm_password" placeholder="Confirmer le nouveau" required>
+		<div class="password-field">
+            <input type="password" placeholder="Nouveau mot de passe" name="password" id="password" autocomplete="current-password" required>
+            <button
+                type="button"
+                class="password-toggle-btn"
+                data-toggle-password
+                data-target="password"
+                aria-label="Afficher le mot de passe"
+                aria-controls="password"
+                aria-pressed="false"
+            >
+				<i class="fa-solid fa-eye-slash"></i>
+            </button>
+        </div>
+		<div class="password-field">
+            <input type="password" placeholder="Confirmer le mot de passe" name="password_confirm" id="password_confirm" autocomplete="new-password" required>
+            <button
+                type="button"
+                class="password-toggle-btn"
+                data-toggle-password
+                data-target="password_confirm"
+                aria-label="Afficher le mot de passe"
+                aria-controls="password_confirm"
+                aria-pressed="false"
+            >
+                <i class="fa-solid fa-eye-slash"></i>
+            </button>
+        </div>
         <button type="submit" name="reset_password" class="btn-primary profile-submit">Changer le mot de passe</button>
     </form>
 </div>
+
+<script type="module" src="/js/auth.js"></script>

@@ -34,7 +34,20 @@
 				<h4>Modifier mon email</h4>
 				<form action="/index.php?action=update-profile" method="POST" class="profile-form">
 					<input type="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
-					<input type="password" name="password" placeholder="Mot de passe" required>
+					<div class="password-field">
+		                <input type="password" placeholder="Mot de passe" name="password" id="password" autocomplete="current-password" required>
+		                <button
+		                    type="button"
+		                    class="password-toggle-btn"
+		                    data-toggle-password
+		                    data-target="password"
+		                    aria-label="Afficher le mot de passe"
+		                    aria-controls="password"
+		                    aria-pressed="false"
+		                >
+							<i class="fa-solid fa-eye-slash"></i>
+		                </button>
+		            </div>
 					<button type="submit" name="update_email" class="btn-primary profile-submit">Changer mon email</button>
 				</form>
 			</section>
@@ -42,9 +55,48 @@
 			<section class="profile-action-block">
 				<h4>Changer le mot de passe</h4>
 				<form action="/index.php?action=update-profile" method="POST" class="profile-form">
-					<input type="password" name="old_password" placeholder="Ancien mot de passe" required>
-					<input type="password" name="new_password" placeholder="Nouveau mot de passe" required>
-					<input type="password" name="confirm_password" placeholder="Confirmer le nouveau" required>
+					<div class="password-field">
+		                <input type="password" placeholder="Ancien mot de passe" name="old_password" id="old_password" autocomplete="old_password" required>
+		                <button
+		                    type="button"
+		                    class="password-toggle-btn"
+		                    data-toggle-password
+		                    data-target="old_password"
+		                    aria-label="Afficher le mot de passe"
+		                    aria-controls="old_password"
+		                    aria-pressed="false"
+		                >
+							<i class="fa-solid fa-eye-slash"></i>
+		                </button>
+		            </div>
+					<div class="password-field">
+		                <input type="password" placeholder="Nouveau mot de passe" name="new_password" id="new_password" autocomplete="new_password" required>
+		                <button
+		                    type="button"
+		                    class="password-toggle-btn"
+		                    data-toggle-password
+		                    data-target="new_password"
+		                    aria-label="Afficher le mot de passe"
+		                    aria-controls="new_password"
+		                    aria-pressed="false"
+		                >
+							<i class="fa-solid fa-eye-slash"></i>
+		                </button>
+		            </div>
+					<div class="password-field">
+		                <input type="password" placeholder="Confirmer le mot de passe" name="confirm_password" id="confirm_password" autocomplete="confirm_password" required>
+		                <button
+		                    type="button"
+		                    class="password-toggle-btn"
+		                    data-toggle-password
+		                    data-target="confirm_password"
+		                    aria-label="Afficher le mot de passe"
+		                    aria-controls="confirm_password"
+		                    aria-pressed="false"
+		                >
+							<i class="fa-solid fa-eye-slash"></i>
+		                </button>
+		            </div>
 					<button type="submit" name="update_password" class="btn-primary profile-submit">Changer le mot de passe</button>
 				</form>
 			</section>
@@ -64,3 +116,4 @@
 </div>
 
 <script type="module" src="/js/settings.js"></script>
+<script type="module" src="/js/auth.js"></script>

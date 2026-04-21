@@ -1,5 +1,14 @@
 import { showToast, showConfirmModal } from './utils.js';
 
+function escapeHtml(value) {
+	return String(value)
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#039;');
+}
+
 // Scroll auto vers le bas au chargement
 const container = document.getElementById('comments-container');
 if (container) {
@@ -93,8 +102,8 @@ document.getElementById('comment-form')?.addEventListener('submit', function (e)
 						container.removeChild(noComment);
 					const newCommentHtml = `
 						<div class="comment" id="comment-${res.comment_id}">
-	                        <strong>${res.username}</strong>
-	                        <p>${res.content}</p>
+	                        <strong>${escapeHtml(res.username)}</strong>
+	                        <p>${escapeHtml(res.content)}</p>
 							<button class="delete-comment" onclick="deleteComment(${res.comment_id})">×</button>
 	                    </div>
 			        `;

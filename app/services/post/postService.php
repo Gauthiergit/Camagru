@@ -116,7 +116,7 @@ class PostService {
 	    $insertRequest->execute([
 	        'user_id' => $userId,
 	        'post_id' => $postId,
-	        'content' => htmlspecialchars($content)
+	        'content' => $content
 	    ]);
 
 	    return $insertRequest->fetch(PDO::FETCH_ASSOC);

@@ -44,8 +44,8 @@
 							<p class="no-comments-inline">Aucun commentaire pour le moment.</p>
 						<?php else: ?>
 							<?php foreach ($post['comments_list'] as $comment): ?>
-								<p><strong><?= $comment['username'] ?></strong> : 
-								<?= $comment['content'] ?></p>
+								<p><strong><?php echo htmlspecialchars($comment['username'], ENT_QUOTES, 'UTF-8') ?></strong> : 
+								<?php echo htmlspecialchars($comment['content'], ENT_QUOTES, 'UTF-8') ?></p>
 							<?php endforeach; ?>
 						<?php endif; ?>
                 	</div>

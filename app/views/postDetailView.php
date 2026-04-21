@@ -27,7 +27,10 @@
 
         <div class="post-footer">
             <div class="actions">
-                <button class="like-btn <?= $post['user_has_liked'] ? 'active' : '' ?>" data-id="<?= $post['id'] ?>">
+                <button class="like-btn <?= $post['user_has_liked'] ? 'active' : '' ?>"
+					data-id="<?= $post['id'] ?>"
+					<?= !isset($_SESSION['user_id']) ? 'disabled' : '' ?>
+				>
                     <?php if($post['user_has_liked']): ?>
 						<i class="fa-solid fa-heart"></i>
 					<?php else: ?>

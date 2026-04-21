@@ -5,6 +5,10 @@ require_once ROOT . '/app/core/database.php';
 
 $pdo = Database::getPDO();
 $token = $_GET['token'] ?? $_POST['token'] ?? null;
+if (!$token) {
+    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Non autorisé'];
+    redirect('home');
+}
 
 $userService = new UserService($pdo);
 $user = $userService->getUserByResetToken($token);

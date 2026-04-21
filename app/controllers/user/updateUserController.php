@@ -2,10 +2,21 @@
 require_once ROOT . "/app/services/user/userService.php";
 require_once ROOT . '/app/core/database.php';
 
+if (!isset($_SESSION['user_id'])) {
+   $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Non connecté'];
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db = Database::getPDO();
     $userService = new UserService($db);
     $userId = $_SESSION['user_id'];
+	$token = $_POST['csrf_token'] ?? '';
+
+    if (!hash_equals($_SESSION['csrf_token'], $token)) {
+        $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Non autorisé'];
+		exit;
+    }
 
     if (isset($_POST['update_username'])) {
         $result = $userService->updateUsername($userId, $_POST['username']);

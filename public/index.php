@@ -8,7 +8,17 @@ $action = $_GET['action'] ?? 'studio';
 
 $guestOnly = ['login-form', 'register-form', 'login', 'register'];
 
-$authOnly = ['logout', 'profile', 'update-profile', 'upload-post'];
+$authOnly = [
+	'logout',
+	'profile', 
+	'update-profile',
+	'upload-post', 
+	'like',
+	'comment',
+	'update-notifs',
+	'delete-post',
+	'delete-comment'
+];
 
 $isLoggedIn = isset($_SESSION['user_id']);
 
@@ -21,7 +31,7 @@ if ($isLoggedIn && in_array($action, $guestOnly)) {
 }
 
 if (!$isLoggedIn && in_array($action, $authOnly)) {
-    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Veuillez vous connecter pour accéder à cette page.'];
+    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Veuillez vous connecter'];
     redirect('login-form');
 }
 
@@ -42,8 +52,7 @@ $logicRoutes = [
 	'update-notifs' => '/app/controllers/user/updateNotifsController.php',
 	'delete-post' => '/app/controllers/post/deletePostController.php',
 	'post-detail' => '/app/controllers/post/getPostDetailController.php',
-	'delete-comment' => '/app/controllers/post/deleteCommentController.php',
-    'setup' => '/config/setup.php',
+	'delete-comment' => '/app/controllers/post/deleteCommentController.php'
 ];
 
 $viewRoutes = [

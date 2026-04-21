@@ -9,16 +9,18 @@ class PostService {
 
 	public function registerPost($imageDatas)
 	{
-		// 1. Décoder l'image (Base64 -> binaire)
 		$img = str_replace('data:image/png;base64,', '', $imageDatas['image']);
 		$img = str_replace(' ', '+', $img);
 		$background = imagecreatefromstring(base64_decode($img));
 
-		// 2. Charger le sticker
 		$stickerPath = ROOT . '/public/assets/stickers/' . basename($imageDatas['sticker']);
+		if (!file_exists($stickerPath)) {
+			http_response_code(400);
+		    echo json_encode(['success' => false, 'message' => 'Sticker invalide']);
+		    exit;
+		}
 		$sticker = imagecreatefrompng($stickerPath);
 
-		// 3. Montage avec GD (Resampled pour la qualité)
 		list($origW, $origH) = getimagesize($stickerPath);
 		$positionX = (int) round((float) $imageDatas['x']);
 		$positionY = (int) round((float) $imageDatas['y']);
@@ -30,12 +32,10 @@ class PostService {
 		    $width, $height, $origW, $origH
 		);
 
-		// 4. Sauvegarder le fichier
 		$filename = uniqid('camagru_') . '.png';
 		$savePath = ROOT . '/public/uploads/' . $filename;
 
 		if (imagepng($background, $savePath)) {
-		    // 5. Enregistrer en Base de données
 		    $insertRequest = $this->db->prepare("INSERT INTO posts (user_id, filename) VALUES (?, ?)");
 		    $insertRequest->execute([$_SESSION['user_id'], $filename]);
 

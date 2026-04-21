@@ -20,7 +20,7 @@
 					<img src="/uploads/<?= $post['filename'] ?>" class="gallery-img">
 				</a>
 		        <div class="actions">
-		            <button class="like-btn" data-id="<?= $post['id'] ?>">
+		            <button class="like-btn" data-id="<?= $post['id'] ?>" <?= !isset($_SESSION['user_id']) ? 'disabled' : '' ?>>
 						<?php if($post['user_has_liked']): ?>
 							<i class="fa-solid fa-heart"></i>
 						<?php else: ?>

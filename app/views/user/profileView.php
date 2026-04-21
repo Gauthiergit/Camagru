@@ -25,6 +25,7 @@
 			<section class="profile-action-block">
 				<h4>Modifier mon nom d'utilisateur</h4>
 				<form action="/index.php?action=update-profile" method="POST" class="profile-form">
+					<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 					<input type="text" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
 					<button type="submit" name="update_username" class="btn-primary profile-submit">Changer mon nom d'utilisateur</button>
 				</form>
@@ -33,6 +34,7 @@
 			<section class="profile-action-block">
 				<h4>Modifier mon email</h4>
 				<form action="/index.php?action=update-profile" method="POST" class="profile-form">
+					<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 					<input type="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
 					<div class="password-field">
 		                <input type="password" placeholder="Mot de passe" name="password" id="password" autocomplete="current-password" required>
@@ -55,6 +57,7 @@
 			<section class="profile-action-block">
 				<h4>Changer le mot de passe</h4>
 				<form action="/index.php?action=update-profile" method="POST" class="profile-form">
+					<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 					<div class="password-field">
 		                <input type="password" placeholder="Ancien mot de passe" name="old_password" id="old_password" autocomplete="old_password" required>
 		                <button

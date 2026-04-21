@@ -1,5 +1,7 @@
 import { showToast } from './utils.js';
 
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 document.addEventListener('DOMContentLoaded', () => {
 	const toggle = document.getElementById('notif-toggle');
 
@@ -16,7 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		try {
 			const res = await fetch('/index.php?action=update-notifs', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRF-TOKEN': csrfToken
+				},
 				body: JSON.stringify({ wants_notifs: isChecked })
 			});
 

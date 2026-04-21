@@ -5,7 +5,7 @@ require_once ROOT . '/app/core/database.php';
 $token = $_GET['token'] ?? null;
 
 if (!$token) {
-    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Token manquant.'];
+    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Non autorisé'];
     redirect('home');
 }
 

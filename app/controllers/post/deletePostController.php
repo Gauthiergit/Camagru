@@ -5,6 +5,14 @@ header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
 	http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Non connecté']);
+    exit;
+}
+
+$headers = getallheaders();
+$receivedToken = $headers['X-CSRF-TOKEN'] ?? '';
+if (!hash_equals($_SESSION['csrf_token'], $receivedToken)) {
+    http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Non autorisé']);
     exit;
 }

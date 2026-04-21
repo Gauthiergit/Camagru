@@ -2,6 +2,8 @@ import { showToast } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
+	const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 	document.addEventListener('click', (e) => {
 		const commentsToggleBtn = e.target.closest('.comments-toggle-btn');
 		if (commentsToggleBtn) {
@@ -27,7 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		fetch('/index.php?action=like', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRF-TOKEN': csrfToken
+			},
 			body: JSON.stringify({ post_id: postId })
 		})
 			.then(res => res.json())

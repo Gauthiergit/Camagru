@@ -1,5 +1,7 @@
 import { showToast, showConfirmModal } from './utils.js';
 
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 function escapeHtml(value) {
 	return String(value)
 		.replace(/&/g, '&amp;')
@@ -26,7 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		fetch('/index.php?action=like', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRF-TOKEN': csrfToken
+			},
 			body: JSON.stringify({ post_id: postId })
 		})
 			.then(res => res.json())
@@ -58,7 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		fetch('/index.php?action=delete-comment', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRF-TOKEN': csrfToken
+			},
 			body: JSON.stringify({ comment_id: commentId })
 		})
 			.then(res => res.json())
@@ -90,7 +98,10 @@ document.getElementById('comment-form')?.addEventListener('submit', function (e)
 
 	fetch('/index.php?action=comment', {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers: {
+			'Content-Type': 'application/json',
+			'X-CSRF-TOKEN': csrfToken
+		},
 		body: JSON.stringify(data)
 	})
 		.then(res => res.json())

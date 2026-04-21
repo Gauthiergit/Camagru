@@ -10,6 +10,7 @@ const initStudioCamera = () => {
 	const fileInput = document.getElementById('file-input');
 	const selectFileBtn = document.getElementById('select-file-btn');
 	const sideGallery = document.getElementById('side-gallery');
+	const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 	let videoStream = null;
 
@@ -305,7 +306,10 @@ const initStudioCamera = () => {
 
 		fetch('/index.php?action=upload-post', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRF-TOKEN': csrfToken
+			},
 			body: JSON.stringify(imageDatas)
 		})
 			.then(async (res) => {
@@ -348,7 +352,10 @@ const initStudioCamera = () => {
 
 		fetch('/index.php?action=delete-post', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRF-TOKEN': csrfToken
+			},
 			body: JSON.stringify({ post_id: postId })
 		})
 			.then(res => res.json())

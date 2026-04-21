@@ -14,9 +14,12 @@
                 <p class="no-comments">Aucun commentaire pour le moment.</p>
             <?php else: ?>
                 <?php foreach ($post['comments_list'] as $comment): ?>
-                    <div class="comment">
+                    <div class="comment" id="comment-<?= $comment['comment_id']?>">
                         <strong><?= $comment['username'] ?></strong>
                         <p><?= $comment['content'] ?></p>
+						<?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $comment['user_id']): ?>
+							<button class="delete-comment" onclick="deleteComment(<?= $comment['comment_id'] ?>)">x</button>
+						<?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>

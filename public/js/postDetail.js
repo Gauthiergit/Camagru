@@ -1,4 +1,4 @@
-import { showToast } from './utils.js';
+import { showToast, showConfirmModal } from './utils.js';
 
 // Scroll auto vers le bas au chargement
 const container = document.getElementById('comments-container');
@@ -38,6 +38,40 @@ document.addEventListener('DOMContentLoaded', () => {
 			})
 			.catch(err => console.error("Erreur Like:", err));
 	});
+
+	window.deleteComment = async function (commentId) {
+		const confirmed = await showConfirmModal(
+			"Supprimer le commentaire",
+			"Cette action est irréversible. Voulez-vous continuer ?"
+		);
+
+		if (!confirmed) return;
+
+		fetch('/index.php?action=delete-comment', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ comment_id: commentId })
+		})
+			.then(res => res.json())
+			.then(data => {
+				if (data.success) {
+					const commentElement = document.getElementById(`comment-${commentId}`);
+					if (commentElement) {
+						commentElement.style.opacity = '0';
+						commentElement.style.transform = 'scale(0.8)';
+						commentElement.style.transition = 'all 0.3s ease';
+						setTimeout(() => commentElement.remove(), 300);
+					}
+					showToast("Commentaire supprimée avec succès", "success");
+				} else {
+					showToast(data.message, "error");
+				}
+			})
+			.catch(err => {
+				console.error(err);
+				showToast("Une erreur est survenue", "error");
+			});
+	};
 });
 
 document.getElementById('comment-form')?.addEventListener('submit', function (e) {
@@ -57,18 +91,14 @@ document.getElementById('comment-form')?.addEventListener('submit', function (e)
 					const noComment = container.querySelector('.no-comments');
 					if (noComment)
 						container.removeChild(noComment);
-					const comment = document.createElement('div');
-					comment.className = 'comment';
-
-					const username = document.createElement('strong');
-					username.textContent = res.username;
-
-					const content = document.createElement('p');
-					content.textContent = res.content;
-
-					comment.append(username, content);
-					container.appendChild(comment);
-					container.scrollTop = container.scrollHeight;
+					const newCommentHtml = `
+						<div class="comment" id="comment-${res.comment_id}">
+	                        <strong>${res.username}</strong>
+	                        <p>${res.content}</p>
+							<button class="delete-comment" onclick="deleteComment(${res.comment_id})">×</button>
+	                    </div>
+			        `;
+					container.insertAdjacentHTML('afterbegin', newCommentHtml);
 				}
 				this.reset();
 			} else {

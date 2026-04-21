@@ -33,8 +33,6 @@ $userSevice = new UserService($pdo);
 $mailService = new MailService();
 
 try {
-	$postService->addComment($_SESSION['user_id'], $data['post_id'], $data['content']);
-	$currentUser = $userSevice->getUserById($_SESSION['user_id']);
 	$ownerId = $postService->getPostOwnerId($data['post_id']);
 
 	if (!$ownerId) {
@@ -46,12 +44,19 @@ try {
 		exit;
 	}
 
+	$comment = $postService->addComment($_SESSION['user_id'], $data['post_id'], $data['content']);
+	if (!$comment) {
+		throw new RuntimeException('Impossible d\'ajouter le commentaire');
+	}
+
+	$currentUser = $userSevice->getUserById($_SESSION['user_id']);
 	$owner = $userSevice->getUserById($ownerId);
 	$mailService->sendNotification($owner['email'], $owner['wants_notifs']);
 	echo json_encode([
 		'success' => true,
-		'username' => $currentUser['username'],
-		'content' => $data['content']
+			'comment_id' => $comment['id'],
+			'username' => $currentUser['username'],
+			'content' => $comment['content']
 	]);
 } catch (Throwable $e) {
 	http_response_code(500);

@@ -108,8 +108,18 @@ class PostService {
 	}
 
 	public function addComment($userId, $postId, $content) {
-	    $insertRequest = $this->db->prepare("INSERT INTO comments (user_id, post_id, content) VALUES (?, ?, ?)");
-	    return $insertRequest->execute([$userId, $postId, htmlspecialchars($content)]);
+	    $insertRequest = $this->db->prepare(
+	        "INSERT INTO comments (user_id, post_id, content)
+	         VALUES (:user_id, :post_id, :content)
+	         RETURNING id, user_id, post_id, content, created_at"
+	    );
+	    $insertRequest->execute([
+	        'user_id' => $userId,
+	        'post_id' => $postId,
+	        'content' => htmlspecialchars($content)
+	    ]);
+
+	    return $insertRequest->fetch(PDO::FETCH_ASSOC);
 	}
 
 	public function getPostOwnerId($postId)
@@ -145,7 +155,9 @@ class PostService {
 	                (
 	                    SELECT json_agg(
 	                        json_build_object(
+								'comment_id', c.id,
 	                            'username', cu.username,
+								'user_id', c.user_id,
 	                            'content', c.content,
 	                            'created_at', c.created_at
 	                        ) ORDER BY c.created_at ASC
@@ -166,5 +178,16 @@ class PostService {
 	        $post['comments_list'] = $post['comments_list'] ? json_decode($post['comments_list'], true) : [];
 	    }
 	    return $post;
+	}
+
+	public function getCommentById($commentId) {
+	    $dbRequest = $this->db->prepare("SELECT * FROM comments WHERE id = ?");
+	    $dbRequest->execute([$commentId]);
+	    return $dbRequest->fetch(PDO::FETCH_ASSOC);
+	}
+
+	public function deleteComment($commentId) {
+	    $dbRequest = $this->db->prepare("DELETE FROM comments WHERE id = ?");
+	    return $dbRequest->execute([$commentId]);
 	}
 }

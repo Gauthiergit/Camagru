@@ -1222,6 +1222,31 @@ input:checked+.slider:before {
 	font-size: 1rem;
 }
 
+.delete-comment {
+	position: absolute;
+	top: 8px;
+	right: 10px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	border: none;
+	background: transparent;
+	color: #94a3b8;
+	font-weight: 700;
+	font-size: 0.95rem;
+	line-height: 1;
+	cursor: pointer;
+	border-radius: 999px;
+	transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.delete-comment:hover {
+	background: #fee2e2;
+	color: #b91c1c;
+}
+
 @media (max-width: 980px) {
 	.camera-layout {
 		flex-direction: column;
@@ -1448,7 +1473,9 @@ input:checked+.slider:before {
 }
 
 .comment {
+	position: relative;
 	padding: 12px 14px;
+	padding-right: 42px;
 	margin-bottom: 12px;
 	border-radius: 14px;
 	background: #fafbfd;

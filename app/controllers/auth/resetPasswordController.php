@@ -7,7 +7,7 @@ $pdo = Database::getPDO();
 $token = $_GET['token'] ?? $_POST['token'] ?? null;
 if (!$token) {
     $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Non autorisé'];
-    redirect('home');
+    redirect('studio');
 }
 
 $userService = new UserService($pdo);
@@ -20,7 +20,7 @@ if (!$user) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if ($_POST['password'] !== $_POST['confirm_password'])
+    if ($_POST['password'] !== $_POST['password_confirm'])
 	{
         $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Les mots de passe ne correspondent pas.'];
 	} else {

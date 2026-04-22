@@ -10,10 +10,15 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $headers = getallheaders();
-$receivedToken = $headers['X-CSRF-TOKEN'] ?? '';
-if (!hash_equals($_SESSION['csrf_token'], $receivedToken)) {
-    http_response_code(403);
-    echo json_encode(['success' => false, 'message' => 'Non autorisé']);
+$isAjax = isset($headers['X-CSRF-TOKEN']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest');
+if (!isset($headers['X-CSRF-TOKEN']) || !hash_equals($_SESSION['csrf_token'], $headers['X-CSRF-TOKEN'])) {
+    if ($isAjax) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Non autorisée']);
+    } else {
+        $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Non autorisé.'];
+        header('Location: index.php?action=studio');
+    }
     exit;
 }
 
@@ -27,16 +32,12 @@ if ($postId) {
 
     if ($post && $post['user_id'] == $_SESSION['user_id']) {
         
-        // 1. Supprimer le fichier physique
         $filePath = ROOT . '/public/uploads/' . $post['filename'];
         if (file_exists($filePath)) {
             unlink($filePath);
         }
 
-        // 2. Supprimer l'entrée en base de données
-        // (Les likes et commentaires seront supprimés via ON DELETE CASCADE si configuré)
         $postService->deletePost($postId);
-
         echo json_encode(['success' => true]);
     } else {
 		http_response_code(401);

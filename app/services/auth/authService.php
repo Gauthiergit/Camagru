@@ -70,17 +70,7 @@ class AuthService {
 	}
 
 	public function isValidPassword($password) {
-	    // Explication de la regex :
-	    // ^               : Début de la chaîne
-	    // (?=.*[a-z])     : Au moins une minuscule
-	    // (?=.*[A-Z])     : Au moins une majuscule
-	    // (?=.*[0-9])     : Au moins un chiffre (optionnel mais conseillé)
-	    // (?=.*[!@#$%^&*]) : Au moins un caractère spécial parmi cette liste
-	    // .{8,}           : Au moins 8 caractères au total
-	    // $               : Fin de la chaîne
-	    
 	    $regex = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/';
-	    
 	    return preg_match($regex, $password);
 	}
 }

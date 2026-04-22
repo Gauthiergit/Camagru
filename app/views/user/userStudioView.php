@@ -17,6 +17,7 @@
 			<div class="controls studio-controls">
 				<input id="file-input" type="file" accept="image/*" style="display:none;">
 				<button id="select-file-btn" class="btn-primary" type="button">Choisir une image</button>
+				<button id="camera" class="btn-primary" type="button">Utiliser ma camera</button>
 				<button id="snap" class="btn-primary" disabled>📸 Prendre la photo</button>
 			</div>
 	

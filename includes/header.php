@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
     <title>Camagru - 42</title>
+	<link rel="icon" type="image/png" href="/assets/logo/logo.png">
     <link rel="stylesheet" href="/css/style.css">
 	<script src="https://kit.fontawesome.com/66ee37b62d.js" crossorigin="anonymous"></script>
 </head>
@@ -19,11 +20,7 @@
                 <a href="index.php">Accueil</a>
                 <a href="/index.php?action=gallery">Galerie</a>
 				<?php if (isset($_SESSION['user_id'])): ?>
-					<form action="/index.php?action=profile" method="POST" class="inline-form">
-					    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-					    <button type="submit" class="link-profile">Mon Profil</button>
-					</form>
-		            <a href="/index.php?action=profile">Mon Profil</a>
+					<a href="/index.php?action=profile">Mon Profil</a>
 		            <span class="user-greeting"><strong>🟢<?php echo htmlspecialchars($_SESSION['username']); ?></strong></span>
 		            <form action="/index.php?action=logout" method="POST" class="logout-form">
 						<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">

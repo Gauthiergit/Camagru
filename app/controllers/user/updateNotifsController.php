@@ -11,10 +11,15 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $headers = getallheaders();
-$receivedToken = $headers['X-CSRF-TOKEN'] ?? '';
-if (!hash_equals($_SESSION['csrf_token'], $receivedToken)) {
-    http_response_code(403);
-    echo json_encode(['success' => false, 'message' => 'Non autorisé']);
+$isAjax = isset($headers['X-CSRF-TOKEN']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest');
+if (!isset($headers['X-CSRF-TOKEN']) || !hash_equals($_SESSION['csrf_token'], $headers['X-CSRF-TOKEN'])) {
+    if ($isAjax) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Non autorisée']);
+    } else {
+        $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Non autorisé.'];
+        header('Location: index.php?action=studio');
+    }
     exit;
 }
 

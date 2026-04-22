@@ -60,7 +60,10 @@ nav {
 	padding: 8px 14px;
 	border-radius: 999px;
 	border: 1px solid transparent;
+	background: transparent;
 	font-weight: 500;
+	font: inherit;
+	cursor: pointer;
 	transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 	text-decoration: none;
 	color: white;
@@ -71,31 +74,6 @@ nav {
 	border-color: #e5e7eb;
 	transform: translateY(-1px);
 	color: #262626;
-}
-
-.link-profile {
-    display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-height: 36px;
-	padding: 8px 14px;
-	border-radius: 999px;
-	border: 1px solid transparent;
-	font-weight: 500;
-	transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-	text-decoration: none;
-	color: white;
-}
-
-.link-profile:hover {
-	background: #f3f4f6;
-	border-color: #e5e7eb;
-	transform: translateY(-1px);
-	color: #262626;
-}
-
-.inline-form {
-    display: inline;
 }
 
 .btn-login {
@@ -1631,4 +1609,21 @@ input:checked+.slider:before {
 	.comment-form button {
 		width: 100%;
 	}
+}
+
+.page-not-found {
+	max-width: 760px;
+	margin: 6vh auto 50px;
+	padding: 42px 30px;
+	text-align: center;
+	background: #fff;
+	border: 1px solid #e9eaee;
+	border-radius: 20px;
+	box-shadow: 0 18px 45px rgba(19, 32, 68, 0.08);
+}
+
+.page-not-found h1{
+	font-size: clamp(1.9rem, 3vw, 2.8rem);
+	line-height: 1.15;
+	color: #1f2937;
 }

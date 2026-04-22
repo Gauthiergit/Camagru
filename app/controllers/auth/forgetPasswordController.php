@@ -5,7 +5,7 @@ require_once ROOT . '/app/core/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 	$_SESSION['flash'] = ['type' => 'danger', 'message' => 'Méthode non autorisée'];
-	redirect('home');
+	redirect('studio');
 }
 	
 $email = $_POST['email'];

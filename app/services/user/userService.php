@@ -23,14 +23,12 @@ class UserService {
 	        return "Le mot de passe doit contenir au minimum 8 caractères, un chiffre, une majuscule, une minuscule et un caractère spécial.";
 	    }
 
-        // 2. Vérifier si l'utilisateur existe déjà
         $dbRequest = $this->db->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
         $dbRequest->execute([$username, $email]);
         if ($dbRequest->fetch()) {
             return "Le nom d'utilisateur ou l'email est déjà pris.";
         }
  
-        // 3. Hachage et Insertion
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
 		$token = bin2hex(random_bytes(16));
@@ -80,9 +78,16 @@ class UserService {
 	    $userPassword = $this->getUserPasswordHash($userId);
 		$user = $this->getUserById($userId);
 
-	    if (!password_verify($password, $userPassword)) {
-	        return "Non autorisé";
-	    }
+		if (!password_verify($password, $userPassword)) {
+			return "Non autorisé";
+		}
+		
+		 $checkRequest = $this->db->prepare("SELECT id FROM users WHERE email = ?");
+		 $checkRequest->execute([$newEmail]);
+		 if ($checkRequest->fetch()) {
+            return "L'email est déjà pris.";
+        }
+
 
 	    if ($user['email'] !== $newEmail) {
 	        $newToken = bin2hex(random_bytes(16));

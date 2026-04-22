@@ -20,7 +20,7 @@
             </button>
         </div>
 		<div class="password-field">
-            <input type="password" placeholder="Confirmer le mot de passe" name="password_confirm" id="password_confirm" autocomplete="new-password" required>
+            <input type="password" placeholder="Confirmer le mot de passe" name="password_confirm" id="password_confirm" autocomplete="password_confirm" required>
             <button
                 type="button"
                 class="password-toggle-btn"

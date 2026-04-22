@@ -2,11 +2,9 @@
 require_once('database.php');
 
 try {
-    // Connexion directe à la DB (Postgres la crée via le docker-compose au démarrage)
     $pdo = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Création de la table users (Syntaxe Postgres : SERIAL pour l'auto-increment)
     $usersTable = "CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         username VARCHAR(50) NOT NULL UNIQUE,

@@ -6,18 +6,6 @@ if (!isset($_SESSION['user_id'])) {
    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Non connecté'];
     redirect('login-form');
 }
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-	$_SESSION['flash'] = ['type' => 'danger', 'message' => 'Méthode non autorisée'];
-	redirect('home');
-}
-
-$token = $_POST['csrf_token'] ?? '';
-
-if (!hash_equals($_SESSION['csrf_token'], $token)) {
-    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Non autorisé'];
-	redirect('home');
-}
     
 $pdo = Database::getPDO();
 

@@ -2,6 +2,11 @@ import { showToast, showConfirmModal } from './utils.js';
 
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+const container = document.getElementById('comments-container');
+if (container) {
+	container.scrollTop = container.scrollHeight;
+}
+
 function escapeHtml(value) {
 	return String(value)
 		.replace(/&/g, '&amp;')
@@ -11,11 +16,6 @@ function escapeHtml(value) {
 		.replace(/'/g, '&#039;');
 }
 
-// Scroll auto vers le bas au chargement
-const container = document.getElementById('comments-container');
-if (container) {
-	container.scrollTop = container.scrollHeight;
-}
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						commentElement.style.transition = 'all 0.3s ease';
 						setTimeout(() => commentElement.remove(), 300);
 					}
-					showToast("Commentaire supprimée avec succès", "success");
+					showToast("Commentaire supprimé avec succès", "success");
 				} else {
 					showToast(data.message, "error");
 				}

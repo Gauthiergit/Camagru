@@ -6,7 +6,7 @@ $token = $_GET['token'] ?? null;
 
 if (!$token) {
     $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Non autorisé'];
-    redirect('home');
+    redirect('studio');
 }
 
 $pdo = Database::getPDO();

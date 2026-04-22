@@ -6,7 +6,13 @@ require_once ROOT . "/app/utils/functions.php";
 
 $action = $_GET['action'] ?? 'studio';
 
-$guestOnly = ['login-form', 'register-form', 'login', 'register'];
+$guestOnly = [
+	'login-form',
+	'register-form',
+	'login',
+	'register',
+	'forget-password-form'
+];
 
 $authOnly = [
 	'logout',
@@ -59,7 +65,8 @@ $viewRoutes = [
     'home' => '/app/views/homeView.php',
     'register-form' => '/app/views/auth/registerView.php',
 	'login-form' => '/app/views/auth/loginView.php',
-	'forget-password-form' => '/app/views/auth/forgetPasswordView.php'
+	'forget-password-form' => '/app/views/auth/forgetPasswordView.php',
+	'not-found' => '/app/views/notFound.php'
 ];
 
 // ------Logic------
@@ -76,6 +83,6 @@ if (array_key_exists($action, $viewRoutes)) {
 } else {
     http_response_code(404);
     require_once ROOT . '/includes/header.php';
-    echo "<h1>404 - Page non trouvée</h1>";
+    require_once ROOT . $viewRoutes['not-found'];
     require_once ROOT . '/includes/footer.php';
 }

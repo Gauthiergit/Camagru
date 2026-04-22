@@ -1,6 +1,7 @@
 import { showToast, showConfirmModal } from './utils.js';
 
 const initStudioCamera = () => {
+	//---------- Variables ----------
 	const video = document.getElementById('video');
 	const errorMsg = document.getElementById('camera-error');
 	const snap = document.getElementById('snap');
@@ -11,28 +12,12 @@ const initStudioCamera = () => {
 	const selectFileBtn = document.getElementById('select-file-btn');
 	const sideGallery = document.getElementById('side-gallery');
 	const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+	const cameraBtn = document.getElementById('camera');
 
 	let videoStream = null;
 
 	let uploadedImg = null;
 
-	if (!video || !snap || !canvas || !fileInput || !selectFileBtn) {
-		console.error("Elements camera introuvables dans la page.");
-		return;
-	}
-
-	snap.disabled = true;
-
-	const showCameraError = (message) => {
-		if (!errorMsg) {
-			console.error(message);
-			return;
-		}
-		errorMsg.textContent = message;
-		errorMsg.style.display = "block";
-	};
-
-	// --- ÉTAT DU STICKER ---
 	let currentStickerImg = null;
 	let selectedStickerInput = null;
 	let stickerLoadToken = 0;
@@ -44,45 +29,24 @@ const initStudioCamera = () => {
 		dragStartX: 0, dragStartY: 0
 	};
 	const RESIZE_HANDLE_SIZE = 10;
-
-	if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-		navigator.mediaDevices.getUserMedia({
-			video: { width: 640, height: 480 },
-			audio: false
-		})
-			.then((stream) => {
-				videoStream = stream;
-				video.srcObject = stream;
-				video.play();
-			})
-			.catch((err) => {
-				console.error("Erreur : " + err);
-				showCameraError("Impossible d'accéder à la caméra. Vérifie les permissions navigateur.");
-			});
-	} else {
-		showCameraError("Votre navigateur ne supporte pas l'accès caméra.");
+	
+	if (!video || !snap || !canvas || !fileInput || !selectFileBtn) {
+		console.error("Elements camera introuvables dans la page.");
+		return;
 	}
+	
+	snap.disabled = true;
 
-	selectFileBtn.addEventListener('click', () => {
-		fileInput.click();
-	});
+	//---------- Utils functions ----------
 
-	fileInput.addEventListener('change', (e) => {
-		const file = e.target.files?.[0];
-
-		if (!file) {
+	const showCameraError = (message) => {
+		if (!errorMsg) {
+			console.error(message);
 			return;
 		}
-
-		if (!file.type.startsWith('image/')) {
-			showToast("Le fichier doit etre une image.", 'error');
-			fileInput.value = '';
-			return;
-		}
-
-		handleFile(file);
-		fileInput.value = '';
-	});
+		errorMsg.textContent = message;
+		errorMsg.style.display = "block";
+	};
 
 	function handleFile(file) {
 		const reader = new FileReader();
@@ -137,7 +101,7 @@ const initStudioCamera = () => {
 		}
 
 		requestAnimationFrame(drawScene);
-	}
+	};
 
 	function buildImageWithoutGuides() {
 		const exportCanvas = document.createElement('canvas');
@@ -160,11 +124,9 @@ const initStudioCamera = () => {
 			exportCtx.drawImage(video, 0, 0, exportCanvas.width, exportCanvas.height);
 		}
 		exportCtx.drawImage(currentStickerImg, stickerData.x, stickerData.y, stickerData.w, stickerData.h);
-
+		
 		return exportCanvas.toDataURL('image/png');
-	}
-
-	requestAnimationFrame(drawScene);
+	};
 
 	function resetStickerTransform() {
 		stickerData.x = 50;
@@ -172,7 +134,7 @@ const initStudioCamera = () => {
 		stickerData.w = 150;
 		stickerData.h = 150;
 	}
-
+	
 	function clearCurrentSticker() {
 		currentStickerImg = null;
 		stickerData.isDragging = false;
@@ -181,42 +143,6 @@ const initStudioCamera = () => {
 		canvas.style.cursor = 'default';
 		selectedStickerInput = null;
 	}
-
-	// --- 3. SÉLECTION DU STICKER ---
-	stickers.forEach(input => {
-		input.addEventListener('click', () => {
-			if (selectedStickerInput === input) {
-				input.checked = false;
-				clearCurrentSticker();
-				return;
-			}
-
-			selectedStickerInput = input;
-			const loadToken = ++stickerLoadToken;
-			snap.disabled = true;
-			const nextStickerImg = new Image();
-			nextStickerImg.onload = () => {
-				if (loadToken !== stickerLoadToken) {
-					return;
-				}
-				currentStickerImg = nextStickerImg;
-				resetStickerTransform();
-				snap.disabled = false;
-			};
-			nextStickerImg.onerror = () => {
-				if (loadToken !== stickerLoadToken) {
-					return;
-				}
-				selectedStickerInput = null;
-				input.checked = false;
-				currentStickerImg = null;
-				showToast("Impossible de charger ce sticker.", "error");
-			};
-			nextStickerImg.src = "/assets/stickers/" + input.value;
-		});
-	});
-
-	// --- 4. INTERACTIVITÉ SOURIS (Drag & Resize) ---
 
 	function getMousePos(e) {
 		const rect = canvas.getBoundingClientRect();
@@ -237,70 +163,6 @@ const initStudioCamera = () => {
 		return mx >= stickerData.x && mx <= (stickerData.x + stickerData.w) &&
 			my >= stickerData.y && my <= (stickerData.y + stickerData.h);
 	}
-
-	canvas.addEventListener('mousedown', (e) => {
-		if (!currentStickerImg) return;
-		const mouse = getMousePos(e);
-
-		if (isOverResizeHandle(mouse.x, mouse.y)) {
-			stickerData.isResizing = true;
-		} else if (isOverSticker(mouse.x, mouse.y)) {
-			stickerData.isDragging = true;
-			stickerData.dragStartX = mouse.x - stickerData.x;
-			stickerData.dragStartY = mouse.y - stickerData.y;
-		}
-	});
-
-	canvas.addEventListener('mousemove', (e) => {
-		if (!currentStickerImg) return;
-		const mouse = getMousePos(e);
-
-		if (isOverResizeHandle(mouse.x, mouse.y)) {
-			canvas.style.cursor = 'se-resize';
-		} else if (isOverSticker(mouse.x, mouse.y)) {
-			canvas.style.cursor = 'move';
-		} else {
-			canvas.style.cursor = 'default';
-		}
-
-		if (stickerData.isDragging) {
-			stickerData.x = mouse.x - stickerData.dragStartX;
-			stickerData.y = mouse.y - stickerData.dragStartY;
-		} else if (stickerData.isResizing) {
-			stickerData.w = Math.max(20, mouse.x - stickerData.x);
-			stickerData.h = Math.max(20, mouse.y - stickerData.y);
-		}
-	});
-
-	canvas.addEventListener('mouseup', () => {
-		stickerData.isDragging = false;
-		stickerData.isResizing = false;
-	});
-
-	// --- 5. CAPTURE FINALE ---
-	snap.addEventListener('click', () => {
-		if (!currentStickerImg || !currentStickerImg.complete) {
-			showToast("Le sticker est en cours de chargement, réessaie dans un instant.", 'error');
-			return;
-		}
-
-		const imageData = buildImageWithoutGuides();
-		if (!imageData) {
-			showToast("Impossible de générer l'image à envoyer.", 'error');
-			return;
-		}
-
-		const dataToSend = {
-			image: imageData,
-			sticker: document.querySelector('input[name="sticker"]:checked').value,
-			x: stickerData.x,
-			y: stickerData.y,
-			w: stickerData.w,
-			h: stickerData.h
-		};
-
-		sendToServer(dataToSend);
-	});
 
 	function sendToServer(imageDatas) {
 
@@ -378,6 +240,157 @@ const initStudioCamera = () => {
 				showToast("Une erreur est survenue", "error");
 			});
 	};
+
+	function launchCamera () {
+		if (uploadedImg != null) uploadedImg = null;
+		if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+			navigator.mediaDevices.getUserMedia({
+				video: { width: 640, height: 480 },
+				audio: false
+			})
+			.then((stream) => {
+				videoStream = stream;
+					video.srcObject = stream;
+					video.play();
+				})
+				.catch((err) => {
+					console.error("Erreur : " + err);
+					showCameraError("Impossible d'accéder à la caméra. Vérifie les permissions navigateur.");
+				});
+		} else {
+			showCameraError("Votre navigateur ne supporte pas l'accès caméra.");
+		};
+	};
+
+	launchCamera();
+		
+	//---------- Events listener ----------
+
+	cameraBtn.addEventListener('click', () => {
+		launchCamera();
+	})
+
+	selectFileBtn.addEventListener('click', () => {
+		fileInput.click();
+	});
+	
+	fileInput.addEventListener('change', (e) => {
+		const file = e.target.files?.[0];
+		
+		if (!file) {
+			return;
+		}
+		
+		if (!file.type.startsWith('image/')) {
+			showToast("Le fichier doit etre une image.", 'error');
+			fileInput.value = '';
+			return;
+		}
+		
+		handleFile(file);
+		fileInput.value = '';
+	});
+
+	stickers.forEach(input => {
+		input.addEventListener('click', () => {
+			if (selectedStickerInput === input) {
+				input.checked = false;
+				clearCurrentSticker();
+				return;
+			}
+			
+			selectedStickerInput = input;
+			const loadToken = ++stickerLoadToken;
+			snap.disabled = true;
+			const nextStickerImg = new Image();
+			nextStickerImg.onload = () => {
+				if (loadToken !== stickerLoadToken) {
+					return;
+				}
+				currentStickerImg = nextStickerImg;
+				resetStickerTransform();
+				snap.disabled = false;
+			};
+			nextStickerImg.onerror = () => {
+				if (loadToken !== stickerLoadToken) {
+					return;
+				}
+				selectedStickerInput = null;
+				input.checked = false;
+				currentStickerImg = null;
+				showToast("Impossible de charger ce sticker.", "error");
+			};
+			nextStickerImg.src = "/assets/stickers/" + input.value;
+		});
+	});
+
+	snap.addEventListener('click', () => {
+		if (!currentStickerImg || !currentStickerImg.complete) {
+			showToast("Le sticker est en cours de chargement, réessaie dans un instant.", 'error');
+			return;
+		}
+
+		const imageData = buildImageWithoutGuides();
+		if (!imageData) {
+			showToast("Impossible de générer l'image à envoyer.", 'error');
+			return;
+		}
+
+		const dataToSend = {
+			image: imageData,
+			sticker: document.querySelector('input[name="sticker"]:checked').value,
+			x: stickerData.x,
+			y: stickerData.y,
+			w: stickerData.w,
+			h: stickerData.h
+		};
+
+		sendToServer(dataToSend);
+	});
+	
+	
+	// ---------- Mouse Management----------
+	canvas.addEventListener('mousedown', (e) => {
+		if (!currentStickerImg) return;
+		const mouse = getMousePos(e);
+		
+		if (isOverResizeHandle(mouse.x, mouse.y)) {
+			stickerData.isResizing = true;
+		} else if (isOverSticker(mouse.x, mouse.y)) {
+			stickerData.isDragging = true;
+			stickerData.dragStartX = mouse.x - stickerData.x;
+			stickerData.dragStartY = mouse.y - stickerData.y;
+		}
+	});
+	
+	canvas.addEventListener('mousemove', (e) => {
+		if (!currentStickerImg) return;
+		const mouse = getMousePos(e);
+		
+		if (isOverResizeHandle(mouse.x, mouse.y)) {
+			canvas.style.cursor = 'se-resize';
+		} else if (isOverSticker(mouse.x, mouse.y)) {
+			canvas.style.cursor = 'move';
+		} else {
+			canvas.style.cursor = 'default';
+		}
+
+		if (stickerData.isDragging) {
+			stickerData.x = mouse.x - stickerData.dragStartX;
+			stickerData.y = mouse.y - stickerData.dragStartY;
+		} else if (stickerData.isResizing) {
+			stickerData.w = Math.max(20, mouse.x - stickerData.x);
+			stickerData.h = Math.max(20, mouse.y - stickerData.y);
+		}
+	});
+	
+	canvas.addEventListener('mouseup', () => {
+		stickerData.isDragging = false;
+		stickerData.isResizing = false;
+	});
+
+	// ------- Rendering Loop ---------
+	requestAnimationFrame(drawScene);
 };
 
 if (document.readyState === 'loading') {
